@@ -17,4 +17,13 @@ To build the software, run::
   make externals
   make
 
-The output will be in build/bin/signal-scope.
+The output will be build/bin/signal-scope.
+
+
+Examples
+========
+
+See the examples directory for scripts demonstrating
+the basic usage of signal-scope.  Launch a python
+script by using the File --> Open menu or by passing
+the script filename on the command line to signal-scope.
