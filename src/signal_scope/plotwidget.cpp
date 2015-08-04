@@ -226,6 +226,7 @@ void PlotWidget::onShowSignalContextMenu(const QPoint& pos)
 
       d_plot->removeSignal(signalHandler->signalData());
       mSignals.remove(selectedItem);
+      this->replot();
 
       delete selectedItem;
       delete signalHandler;
