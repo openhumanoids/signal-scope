@@ -24,7 +24,6 @@ option(USE_SYSTEM_LCM "Use system version of lcm.  If off, lcm will be built." O
 option(BUILD_DEPENDENCIES_ONLY "Only build dependencies.  If off, signal-scope will be built." ON)
 
 
-
 ###############################################################################
 # required dependencies
 set(default_cmake_args
@@ -71,8 +70,8 @@ if (NOT USE_SYSTEM_LCM)
 
   ExternalProject_Add(
     lcm
-    URL http://lcm.googlecode.com/files/lcm-1.0.0.tar.gz
-    URL_MD5 69bfbdd9e0d7095c5d7423e71b2fb1a9
+    URL https://github.com/lcm-proj/lcm/archive/v1.2.1.tar.gz
+    URL_MD5 b8c94d8ae0ed70f104a59522be20a073
     CONFIGURE_COMMAND ${source_prefix}/lcm/configure --prefix=${install_prefix}
   )
 
@@ -111,7 +110,6 @@ ExternalProject_Add(ctkPythonConsole
 ###############################################################################
 # signal-scope
 if (NOT BUILD_DEPENDENCIES_ONLY)
-
   ExternalProject_Add(signal_scope
     SOURCE_DIR ${Superbuild_SOURCE_DIR}/../..
     CMAKE_CACHE_ARGS
