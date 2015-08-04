@@ -109,6 +109,14 @@ SelectSignalDialog::~SelectSignalDialog()
 
 QList<SignalHandler*> SelectSignalDialog::createSignalHandlers() const
 {
+  if (!mInternal->ChannelListBox->currentItem()
+      || !mInternal->MessageTypeListBox->currentItem()
+      || !mInternal->MessageFieldListBox->currentItem())
+    {
+    return QList<SignalHandler*>();
+    }
+
+
   QString channel = mInternal->ChannelListBox->currentItem()->text();
   QString messageType = mInternal->MessageTypeListBox->currentItem()->text();
   QString messageField = mInternal->MessageFieldListBox->currentItem()->text();
