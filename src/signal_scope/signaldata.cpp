@@ -139,6 +139,39 @@ void SignalData::updateInterval(double minTime, double maxTime)
   }
 }
 
+QRectF SignalData::computeBounds()
+{
+  QMutexLocker locker(&d_data->mutex);
+
+
+  QVector<double>& xvalues = d_data->xvalues;
+  QVector<double>& yvalues = d_data->yvalues;
+  const size_t n = xvalues.size();
+
+  if (n == 0)
+  {
+    return QRectF();
+  }
+
+  double minX = std::numeric_limits<double>::max();
+  double minY = std::numeric_limits<double>::max();
+  double maxX = -std::numeric_limits<double>::max();
+  double maxY = -std::numeric_limits<double>::max();
+
+  for (size_t i = 0; i < n; ++i)
+  {
+    double x = xvalues[i];
+    double y = yvalues[i];
+
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+
+  return QRectF(minX, minY, maxX-minX, maxY-minY);
+}
+
 void SignalData::updateValues()
 {
   QVector<double>& xvalues = d_data->xvalues;

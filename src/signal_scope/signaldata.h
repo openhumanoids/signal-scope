@@ -30,6 +30,10 @@ public:
 
     void clear();
 
+    // computes the min and max values.
+    // Note, this function automatically calls lock and unlock.
+    QRectF computeBounds();
+
     // New signal data points per second are calculated using
     // an exponential moving average with a 1 second time window.
     double messageFrequency() const;

@@ -150,7 +150,7 @@ void PlotWidget::onShowContextMenu(const QPoint& pos)
     int result = dialog.exec();
     if (result == QDialog::Accepted)
     {
-      d_plot->setAxisScale(QwtPlot::yLeft, dialog.lower(), dialog.upper());
+      this->setYAxisScale(dialog.lower(), dialog.upper());
     }
   }
 }
@@ -280,7 +280,36 @@ void PlotWidget::replot()
 
 void PlotWidget::onResetYAxisScale()
 {
+  QRectF area;
+  foreach (SignalHandler* signalHandler, mSignals.values())
+  {
+    if (this->signalIsVisible(signalHandler))
+    {
+      QRectF signalBounds = signalHandler->signalData()->computeBounds();
 
+      if (!area.isValid())
+      {
+        area = signalBounds;
+      }
+      else
+      {
+        area = area.united(signalBounds);
+      }
+    }
+  }
+
+  if (!area.isValid())
+  {
+    area = QRectF(-1, -1, 2, 2);
+  }
+
+  this->setYAxisScale(area.top(), area.bottom());
+}
+
+void PlotWidget::setYAxisScale(double lower, double upper)
+{
+  d_plot->setAxisScale(QwtPlot::yLeft, lower, upper);
+  this->replot();
 }
 
 void PlotWidget::onSignalListItemChanged(QListWidgetItem* item)
