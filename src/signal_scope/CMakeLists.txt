@@ -78,9 +78,14 @@ qt4_wrap_ui(ui_srcs
   selectsignaldialog.ui
   )
 
+qt4_add_resources(resource_srcs
+  resources.qrc
+  )
+
 set(srcs
   ${moc_srcs}
   ${ui_srcs}
+  ${resource_srcs}
   curvedata.cpp
   jointnames.cpp
   main.cpp
