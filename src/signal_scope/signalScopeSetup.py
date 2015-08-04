@@ -7,15 +7,14 @@ from PythonQt import QtGui
 
 _messageTypes = {}
 
-def loadMessageTypes(typesModule):
+def loadMessageTypes(typesDict, typesName):
 
-    typesDict = _messageTypes
-    originalSize = len(typesDict)
-    for name, value in typesModule.__dict__.iteritems():
+    originalSize = len(_messageTypes)
+    for name, value in typesDict.iteritems():
         if hasattr(value, '_get_packed_fingerprint'):
-            typesDict[value._get_packed_fingerprint()] = value
+            _messageTypes[value._get_packed_fingerprint()] = value
 
-    print 'Loaded %d lcm message types from: %s' % (len(typesDict) - originalSize, typesModule.__name__)
+    print 'Loaded %d lcm message types from: %s' % (len(_messageTypes) - originalSize, typesName)
 
 
 def findLCMModules(searchDir):
@@ -25,10 +24,6 @@ def findLCMModules(searchDir):
         if open(initFile, 'r').readline() == '"""LCM package __init__.py file\n':
             moduleDir = os.path.dirname(initFile)
             moduleName = os.path.basename(moduleDir)
-            #print 'loading module:', moduleName
-            #if moduleName == 'bot_procman':
-            #    continue
-
             sys.path.insert(0, os.path.dirname(moduleDir))
             try:
                 module = __import__(moduleName)
@@ -36,7 +31,19 @@ def findLCMModules(searchDir):
                 print traceback.format_exc()
 
             sys.path.pop(0)
-            loadMessageTypes(module)
+            loadMessageTypes(module.__dict__, module.__name__)
+
+
+def findLCMTypes(searchDir):
+    files = glob.glob(os.path.join(searchDir, '*.py'))
+    for filename in files:
+        if open(filename, 'r').readline() == '"""LCM type definitions\n':
+            scope = {}
+            try:
+                execfile(filename, scope)
+            except:
+                pass
+            loadMessageTypes(scope, os.path.basename(filename))
 
 
 def findLCMModulesInSysPath():
@@ -47,6 +54,16 @@ def findLCMModulesInSysPath():
         print traceback.format_exc()
 
 findLCMModulesInSysPath()
+
+
+def getMessageTypeNames():
+    return sorted([cls.__name__ for cls in _messageTypes.values()])
+
+
+def getMessageType(typeName):
+    for cls in _messageTypes.values():
+        if cls.__name__ == typeName:
+            return cls
 
 
 class LookupHelper(object):
@@ -145,7 +162,7 @@ def removePlots():
     _mainWindow.onRemoveAllPlots()
 
 
-def addSignalFunction(channel, signalFunction, plot=None, color=None):
+def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True):
 
     if plot is None:
         plot = getPlot()
@@ -153,17 +170,25 @@ def addSignalFunction(channel, signalFunction, plot=None, color=None):
             plot = addPlot()
 
     if color is not None:
-        color = QtGui.QColor(*[int(x*255) for c in color])
+        rgb = [int(c*255) for c in color]
+        color = QtGui.QColor(*rgb)
     else:
         color = QtGui.QColor()
 
-    _mainWindow.addPythonSignal(plot, [channel, signalFunction, signalFunction.__doc__, color])
+    if wrap:
+        def _signalFunction(x):
+            t, v = signalFunction(x)
+            return t*1e-6, float(v)
+    else:
+        _signalFunction = signalFunction
+
+    _mainWindow.addPythonSignal(plot, [channel, _signalFunction, signalFunction.__doc__, color])
 
 
 def addSignal(channel, timeLookup, valueLookup, plot=None, color=None):
 
     signalFunction = createSignalFunction(timeLookup, valueLookup)
-    addSignalFunction(channel, signalFunction, plot=plot, color=color)
+    addSignalFunction(channel, signalFunction, plot=plot, color=color, wrap=False)
 
 
 def addSignals(channel, timeLookup, valueLookup, keys, keyLookup=None, plot=None, colors=None):
