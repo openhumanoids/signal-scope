@@ -63,6 +63,8 @@ public slots:
   void onResetYAxisScale();
   void setYAxisScale(double lower, double upper);
 
+  void setTimeWindow(double timeWindow);
+
 signals:
 
   void addSignalRequested(PlotWidget* plot);

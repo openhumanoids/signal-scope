@@ -41,6 +41,8 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   mTimeWindowSpin = new QDoubleSpinBox;
   mTimeWindowSpin->setSingleStep(0.1);
+  mTimeWindowSpin->setMinimum(0.0);
+  mTimeWindowSpin->setMaximum(60*5);
 
   QDoubleSpinBox* yScaleSpin = new QDoubleSpinBox;
   yScaleSpin->setSingleStep(0.1);
@@ -457,6 +459,7 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
 
   QString signalDescription = QString("%2 [%1]").arg(signalHandler->channel()).arg(signalHandler->description().split(".").back());
   QListWidgetItem* signalItem = new QListWidgetItem(signalDescription);
+  signalItem->setToolTip(signalDescription);
   mSignalListWidget->addItem(signalItem);
   mSignals[signalItem] = signalHandler;
 
@@ -473,6 +476,10 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
   signalItem->setData(Qt::CheckStateRole, Qt::Checked);
 }
 
+void PlotWidget::setTimeWindow(double timeWindow)
+{
+  mTimeWindowSpin->setValue(timeWindow);
+}
 
 void PlotWidget::loadSettings(const QMap<QString, QVariant>& plotSettings)
 {
@@ -486,7 +493,7 @@ void PlotWidget::loadSettings(const QMap<QString, QVariant>& plotSettings)
   double ymin = plotSettings.value("ymin", QVariant(-10.0)).toDouble();
   double ymax = plotSettings.value("ymax", QVariant(10.0)).toDouble();
   d_plot->setAxisScale(QwtPlot::yLeft, ymin, ymax);
-  mTimeWindowSpin->setValue(timeWindow);
+  this->setTimeWindow(timeWindow);
 
   if (plotSettings.value("curveStyle", "dots") == "lines")
   {
