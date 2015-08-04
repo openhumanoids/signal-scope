@@ -28,6 +28,7 @@
      <string>File</string>
     </property>
     <addaction name="ActionOpen"/>
+    <addaction name="ActionOpenPython"/>
     <addaction name="separator"/>
     <addaction name="ActionSave"/>
     <addaction name="separator"/>
@@ -135,6 +136,11 @@
   <action name="ActionPointSize">
    <property name="text">
     <string>Point size...</string>
+   </property>
+  </action>
+  <action name="ActionOpenPython">
+   <property name="text">
+    <string>Open Python script...</string>
    </property>
   </action>
   <action name="ActionResetTimeZero">

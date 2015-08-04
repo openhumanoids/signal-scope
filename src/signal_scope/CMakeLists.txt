@@ -55,6 +55,7 @@ if(USE_PYTHON)
     pythonsignalhandler.h
     pythonchannelsubscribercollection.h
     pythonchannelsubscriber.h
+    pythonmessageinspector.h
     )
   set(python_srcs)
 endif()

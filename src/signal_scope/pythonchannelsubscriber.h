@@ -55,15 +55,12 @@ public:
 
     QVariantList args;
     args << QByteArray((char*)rbuf->data, rbuf->data_size);
-
     return PythonQt::self()->call(mDecodeCallback, args);
   }
 
 
   void handleMessageOnChannel(const lcm::ReceiveBuffer* rbuf, const std::string& channel)
   {
-    //printf("handle message on channel: %s\n", channel.c_str());
-
     QString channelStr = channel.c_str();
 
     if (!mHandlers.size())
@@ -74,10 +71,9 @@ public:
     QVariant decodedMessage = this->decodeMessage(rbuf);
     if (!decodedMessage.isValid())
     {
-      printf("decoded message is not valid\n");
+      printf("failed to decode message on channel: %s\n", channel.c_str());
       return;
     }
-
 
     foreach (PythonSignalHandler* handler, mHandlers)
     {
