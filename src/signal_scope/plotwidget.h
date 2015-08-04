@@ -3,7 +3,7 @@
 
 #include <qwidget.h>
 #include <qmap.h>
-#include <qwt_plot_curve.h>
+#include <qwt/qwt_plot_curve.h>
 
 class Plot;
 class Knob;

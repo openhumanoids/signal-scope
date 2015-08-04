@@ -10,7 +10,8 @@ include_directories(${DRCLCMTYPES_INCLUDE_DIRS})
 
 
 set(deps)
-find_path(QWT_INCLUDE_DIR qwt.h /usr/include/qwt)
+
+find_path(QWT_INCLUDE_DIR qwt/qwt.h HINTS /usr/local/lib)
 find_library(QWT_LIBRARY qwt)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
