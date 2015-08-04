@@ -24,7 +24,6 @@ public:
 
   void start();
   void stop();
-  void stopThreads();
 
   void replot();
 
