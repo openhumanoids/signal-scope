@@ -7,6 +7,10 @@
 #include "signaldescription.h"
 #include "lcmthread.h"
 
+#if USE_BUILTIN_LCMTYPES
+  #include "builtinmessages.h"
+#endif
+
 #include <QLabel>
 #include <QLayout>
 #include <QApplication>
@@ -26,6 +30,7 @@
 #include "ctkPythonConsole.h"
 #include "ctkAbstractPythonManager.h"
 #include "pythonsignalhandler.h"
+#include "pythonmessageinspector.h"
 #include "pythonchannelsubscribercollection.h"
 
 
@@ -49,10 +54,13 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   this->setWindowTitle("Signal Scope");
 
   mLCMThread = new LCMThread;
-  mLCMThread->start();
 
   this->initPython();
 
+#if USE_BUILTIN_LCMTYPES
+  BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory::instance());
+  BuiltinMessages::registerBuiltinChannels(SignalHandlerFactory::instance());
+#endif
 
   mScrollArea = new QScrollArea;
   mPlotArea = new QWidget;
@@ -65,6 +73,7 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   this->setCentralWidget(mScrollArea);
 
   mInternal->ActionOpen->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
+  mInternal->ActionOpenPython->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
   mInternal->ActionSave->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogSaveButton));
   mInternal->ActionPause->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
   mInternal->ActionClearHistory->setIcon(qApp->style()->standardIcon(QStyle::SP_TrashIcon));
@@ -73,12 +82,16 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
 
   this->connect(mInternal->ActionQuit, SIGNAL(triggered()), SLOT(close()));
   this->connect(mInternal->ActionOpen, SIGNAL(triggered()), SLOT(onOpenSettings()));
+  this->connect(mInternal->ActionOpenPython, SIGNAL(triggered()), SLOT(onOpenPythonScript()));
   this->connect(mInternal->ActionSave, SIGNAL(triggered()), SLOT(onSaveSettings()));
   this->connect(mInternal->ActionPause, SIGNAL(triggered()), SLOT(onTogglePause()));
   this->connect(mInternal->ActionAddPlot, SIGNAL(triggered()), SLOT(onNewPlotClicked()));
   this->connect(mInternal->ActionClearHistory, SIGNAL(triggered()), SLOT(onClearHistory()));
+  this->connect(mInternal->ActionResetTimeZero, SIGNAL(triggered()), SLOT(onResetTimeZero()));
 
   this->connect(mInternal->ActionBackgroundColor, SIGNAL(triggered()), SLOT(onChooseBackgroundColor()));
+  this->connect(mInternal->ActionSetHistoryLength, SIGNAL(triggered()), SLOT(onChooseHistoryLength()));
+
 
   mInternal->toolBar->addSeparator();
   mInternal->toolBar->addWidget(new QLabel("    Style: "));
@@ -113,23 +126,12 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   //mRedrawTimer->setSingleShot(true);
   this->connect(mRedrawTimer, SIGNAL(timeout()), this, SLOT(onRedrawPlots()));
 
-  QShortcut* showConsole = new QShortcut(QKeySequence("F8"), this);
-  this->connect(showConsole, SIGNAL(activated()), this->mConsole, SLOT(show()));
-
-  this->connect(new QShortcut(QKeySequence("Ctrl+W"), this->mConsole), SIGNAL(activated()), this->mConsole, SLOT(close()));
-
-  QString closeShortcut = "Ctrl+D";
-  #ifdef Q_OS_DARWIN
-  closeShortcut = "Meta+D";
-  #endif
-  this->connect(new QShortcut(QKeySequence(closeShortcut), this->mConsole), SIGNAL(activated()), this->mConsole, SLOT(close()));
-
   this->resize(1024,800);
   this->handleCommandLineArgs();
 
   this->onTogglePause();
 
-  //this->testPythonSignals();
+  mLCMThread->start();
 }
 
 MainWindow::~MainWindow()
@@ -152,7 +154,14 @@ void MainWindow::handleCommandLineArgs()
   if (args.length() > 1)
   {
     QString filename = args[1];
-    this->loadSettings(filename);
+    if (filename.endsWith(".py"))
+    {
+      this->loadPythonScript(filename);
+    }
+    else
+    {
+      this->loadSettings(filename);
+    }
   }
   else
   {
@@ -164,14 +173,6 @@ void MainWindow::handleCommandLineArgs()
   }
 }
 
-void MainWindow::testPythonSignals()
-{
-  this->onRemoveAllPlots();
-  PlotWidget* plot = this->addPlot();
-
-  QString testFile = QString(getenv("DRC_BASE")) + "/software/motion_estimate/signal_scope/src/signal_scope/userSignals.py";
-  this->loadPythonSignals(plot, testFile);
-}
 
 void MainWindow::initPython()
 {
@@ -182,30 +183,77 @@ void MainWindow::initPython()
   this->mConsole->setAttribute(Qt::WA_QuitOnClose, true);
   this->mConsole->resize(600, 280);
   this->mConsole->setProperty("isInteractive", true);
-  this->mPythonManager->addObjectToPythonMain("_console", this->mConsole);
+  this->connect(new QShortcut(QKeySequence("F8"), this), SIGNAL(activated()), this->mConsole, SLOT(show()));
+  this->connect(new QShortcut(QKeySequence("Ctrl+W"), this->mConsole), SIGNAL(activated()), this->mConsole, SLOT(close()));
 
-  this->mPythonManager->executeFile(QString(getenv("DRC_BASE")) + "/software/motion_estimate/signal_scope/src/signal_scope/signalScopeSetup.py");
+  QString closeShortcut = "Ctrl+D";
+  #ifdef Q_OS_DARWIN
+  closeShortcut = "Meta+D";
+  #endif
+  this->connect(new QShortcut(QKeySequence(closeShortcut), this->mConsole), SIGNAL(activated()), this->mConsole, SLOT(close()));
+
+
+  PythonQt::self()->registerClass(&PlotWidget::staticMetaObject, "signal_scope");
+  PythonQt::self()->registerClass(&PythonSignalHandler::staticMetaObject, "signal_scope");
+
+  this->mPythonManager->addObjectToPythonMain("_console", this->mConsole);
+  this->mPythonManager->addObjectToPythonMain("_mainWindow", this);
+
+  QString startupFile = QString(":/signalScopeSetup.py");
+
+  QFile f(startupFile);
+  if (!f.open(QFile::ReadOnly | QFile::Text))
+  {
+    printf("error opening startup file: %s\n", qPrintable(startupFile));
+  }
+  else
+  {
+    QTextStream in(&f);
+    this->mPythonManager->executeString(in.readAll());
+  }
+
   PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
   PythonQtObjectPtr decodeCallback = PythonQt::self()->getVariable(mainContext, "decodeMessageFunction");
 
   this->mSubscribers = new PythonChannelSubscriberCollection(mLCMThread, decodeCallback, this);
+  this->mMessageInspector = new PythonMessageInspector(decodeCallback);
+  //this->mLCMThread->addSubscriber(this->mMessageInspector);
 }
 
-void MainWindow::loadPythonSignals(PlotWidget* plot, const QString& filename)
+PythonSignalHandler* MainWindow::addPythonSignal(PlotWidget* plot, QVariant signalData)
 {
-  this->mPythonManager->executeFile(filename);
-  PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
-  QList<QVariant> signalsMap = PythonQt::self()->getVariable(mainContext, "signals").toList();
-  foreach (const QVariant& signalItem, signalsMap)
+  QList<QVariant> signalDataList = signalData.toList();
+  if (signalDataList.length() != 4)
   {
-    QList<QVariant> signalItemList = signalItem.toList();
-    QString channel = signalItemList[0].toString();
-    PythonQtObjectPtr callback = signalItemList[1].value<PythonQtObjectPtr>();
+    printf("incorrect args passed to addPythonSignal\n");
+    return 0;
+  }
 
-    SignalDescription signalDescription;
-    signalDescription.mChannel = channel;
-    PythonSignalHandler* signalHandler = new PythonSignalHandler(&signalDescription, callback);
-    plot->addSignal(signalHandler);
+  QString channel = signalDataList[0].toString();
+  PythonQtObjectPtr callback = signalDataList[1].value<PythonQtObjectPtr>();
+  QString fieldName = signalDataList[2].toString();
+
+  SignalDescription signalDescription;
+  signalDescription.mChannel = channel;
+  signalDescription.mFieldName = fieldName;
+  signalDescription.mColor = signalDataList[3].value<QColor>();
+
+  PythonSignalHandler* signalHandler = new PythonSignalHandler(&signalDescription, callback);
+  plot->addSignal(signalHandler);
+  return signalHandler;
+}
+
+void MainWindow::loadPythonScript(const QString& filename)
+{
+  if (QFileInfo(filename).exists())
+  {
+    this->mLastPythonScript = filename;
+    this->onRemoveAllPlots();
+    this->mPythonManager->executeFile(filename);
+  }
+  else
+  {
+    printf("file does not exist: %s\n", qPrintable(filename));
   }
 }
 
@@ -283,6 +331,17 @@ void MainWindow::onChoosePointSize()
   }
 }
 
+void MainWindow::onChooseHistoryLength()
+{
+  bool ok;
+  int defaultHistoryLength = SignalData::getHistoryLength();
+  int historyLength = QInputDialog::getInt(this, "Choose history length", "History length (seconds)", defaultHistoryLength, 1, 60*60, 1, &ok);
+  if (ok)
+  {
+    SignalData::setHistoryLength(historyLength);
+  }
+}
+
 void MainWindow::setPlotBackgroundColor(QString color)
 {
   foreach (PlotWidget* plot, mPlots)
@@ -355,6 +414,18 @@ void MainWindow::onRedrawPlots()
   }
 }
 
+
+void MainWindow::onOpenPythonScript()
+{
+  QString filter = "Python (*.py)";
+  QString filename = QFileDialog::getOpenFileName(this, "Open Python Script", QDir(this->mLastPythonScript).canonicalPath(), filter);
+  if (filename.length())
+  {
+    this->loadPythonScript(filename);
+  }
+}
+
+
 void MainWindow::onOpenSettings()
 {
   QString filter = "JSON (*.json)";
@@ -383,6 +454,10 @@ void MainWindow::saveSettings(const QString& filename)
 
   settings["windowWidth"] = this->width();
   settings["windowHeight"] = this->height();
+  if (this->mLastPythonScript.length())
+  {
+    settings["script"] = QFileInfo(this->mLastPythonScript).canonicalFilePath();
+  }
 
   QList<QVariant> plotSettings;
   foreach (PlotWidget* plot, mPlots)
@@ -403,18 +478,19 @@ void MainWindow::loadSettings(const QString& filename)
 
 void MainWindow::loadSettings(const QMap<QString, QVariant>& settings)
 {
-  QList<QVariant> plots = settings.value("plots").toList();
-  foreach (const QVariant& plot, plots)
+  QString pythonScript = settings.value("script").toString();
+  if (pythonScript.length())
   {
-    PlotWidget* plotWidget = this->addPlot();
-    QMap<QString, QVariant> plotSettings = plot.toMap();
-    plotWidget->loadSettings(plotSettings);
-
-    QString pythonFile = plotSettings.value("pythonScript").toString();
-    if (pythonFile.length())
+    this->loadPythonScript(pythonScript);
+  }
+  else
+  {
+    QList<QVariant> plots = settings.value("plots").toList();
+    foreach (const QVariant& plot, plots)
     {
-      pythonFile = QString(getenv("DRC_BASE")) + "/" + pythonFile;
-      this->loadPythonSignals(plotWidget, pythonFile);
+      PlotWidget* plotWidget = this->addPlot();
+      QMap<QString, QVariant> plotSettings = plot.toMap();
+      plotWidget->loadSettings(plotSettings);
     }
   }
 
@@ -510,6 +586,12 @@ void MainWindow::onAddSignalToPlot(PlotWidget* plot)
   {
     plot->addSignal(signalHandler);
   }
+}
+
+void MainWindow::onResetTimeZero()
+{
+  SignalHandlerFactory::instance().setTimeZero(0);
+  this->onClearHistory();
 }
 
 void MainWindow::onRemoveAllPlots()

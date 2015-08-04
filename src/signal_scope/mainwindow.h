@@ -2,6 +2,7 @@
 #define _MAINWINDOW_H_
 
 #include <qmainwindow.h>
+#include <qvariant.h>
 #include "fpscounter.h"
 
 class QScrollArea;
@@ -11,7 +12,8 @@ class PlotWidget;
 class LCMThread;
 class PythonChannelSubscriberCollection;
 class SignalHandler;
-
+class PythonSignalHandler;
+class PythonMessageInspector;
 class ctkPythonConsole;
 class ctkAbstractPythonManager;
 
@@ -27,21 +29,29 @@ public:
 
   static QString defaultSettingsDir();
 
-  void setPlotBackgroundColor(QString color);
-
 public slots:
 
   void onTogglePause();
   void onNewPlotClicked();
   void onSaveSettings();
   void onOpenSettings();
+  void onOpenPythonScript();
   void onClearHistory();
   void onRemovePlot(PlotWidget* plot);
   void onAddSignalToPlot(PlotWidget* plot);
   void onRemoveAllPlots();
+  void onResetTimeZero();
+  void setPlotBackgroundColor(QString color);
 
   void onChooseBackgroundColor();
+  void onChooseHistoryLength();
   void onChoosePointSize();
+
+  PlotWidget* addPlot();
+  void loadPythonScript(const QString& filename);
+  PythonSignalHandler* addPythonSignal(PlotWidget* plot, QVariant signalData);
+
+  QList<PlotWidget*> getPlots() { return mPlots; }
 
 protected slots:
 
@@ -63,13 +73,14 @@ protected:
 
   void testPythonSignals();
   void initPython();
-  void loadPythonSignals(PlotWidget* plot, const QString& filename);
 
-  PlotWidget* addPlot();
+
+
   QList<SignalHandler*> getSignalSelectionFromUser();
 
   bool mPlaying;
   QString mLastOpenFile;
+  QString mLastPythonScript;
   QScrollArea* mScrollArea;
   QWidget* mPlotArea;
   QVBoxLayout* mPlotLayout;
@@ -84,6 +95,7 @@ protected:
   ctkPythonConsole* mConsole;
   ctkAbstractPythonManager* mPythonManager;
   PythonChannelSubscriberCollection* mSubscribers;
+  PythonMessageInspector* mMessageInspector;
 
   class Internal;
   Internal* mInternal;

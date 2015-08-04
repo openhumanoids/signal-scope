@@ -7,7 +7,6 @@
 #include "signaldescription.h"
 #include "pythonchannelsubscribercollection.h"
 
-#include <qwt_scale_engine.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QDoubleSpinBox>
@@ -42,6 +41,8 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   mTimeWindowSpin = new QDoubleSpinBox;
   mTimeWindowSpin->setSingleStep(0.1);
+  mTimeWindowSpin->setMinimum(0.0);
+  mTimeWindowSpin->setMaximum(60*5);
 
   QDoubleSpinBox* yScaleSpin = new QDoubleSpinBox;
   yScaleSpin->setSingleStep(0.1);
@@ -151,7 +152,7 @@ void PlotWidget::onShowContextMenu(const QPoint& pos)
     int result = dialog.exec();
     if (result == QDialog::Accepted)
     {
-      d_plot->setAxisScale(QwtPlot::yLeft, dialog.lower(), dialog.upper());
+      this->setYAxisScale(dialog.lower(), dialog.upper());
     }
   }
 }
@@ -225,6 +226,7 @@ void PlotWidget::onShowSignalContextMenu(const QPoint& pos)
 
       d_plot->removeSignal(signalHandler->signalData());
       mSignals.remove(selectedItem);
+      this->replot();
 
       delete selectedItem;
       delete signalHandler;
@@ -281,7 +283,36 @@ void PlotWidget::replot()
 
 void PlotWidget::onResetYAxisScale()
 {
+  QRectF area;
+  foreach (SignalHandler* signalHandler, mSignals.values())
+  {
+    if (this->signalIsVisible(signalHandler))
+    {
+      QRectF signalBounds = signalHandler->signalData()->computeBounds();
 
+      if (!area.isValid())
+      {
+        area = signalBounds;
+      }
+      else
+      {
+        area = area.united(signalBounds);
+      }
+    }
+  }
+
+  if (!area.isValid())
+  {
+    area = QRectF(-1, -1, 2, 2);
+  }
+
+  this->setYAxisScale(area.top(), area.bottom());
+}
+
+void PlotWidget::setYAxisScale(double lower, double upper)
+{
+  d_plot->setAxisScale(QwtPlot::yLeft, lower, upper);
+  this->replot();
 }
 
 void PlotWidget::onSignalListItemChanged(QListWidgetItem* item)
@@ -429,6 +460,7 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
 
   QString signalDescription = QString("%2 [%1]").arg(signalHandler->channel()).arg(signalHandler->description().split(".").back());
   QListWidgetItem* signalItem = new QListWidgetItem(signalDescription);
+  signalItem->setToolTip(signalDescription);
   mSignalListWidget->addItem(signalItem);
   mSignals[signalItem] = signalHandler;
 
@@ -445,6 +477,10 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
   signalItem->setData(Qt::CheckStateRole, Qt::Checked);
 }
 
+void PlotWidget::setTimeWindow(double timeWindow)
+{
+  mTimeWindowSpin->setValue(timeWindow);
+}
 
 void PlotWidget::loadSettings(const QMap<QString, QVariant>& plotSettings)
 {
@@ -458,7 +494,7 @@ void PlotWidget::loadSettings(const QMap<QString, QVariant>& plotSettings)
   double ymin = plotSettings.value("ymin", QVariant(-10.0)).toDouble();
   double ymax = plotSettings.value("ymax", QVariant(10.0)).toDouble();
   d_plot->setAxisScale(QwtPlot::yLeft, ymin, ymax);
-  mTimeWindowSpin->setValue(timeWindow);
+  this->setTimeWindow(timeWindow);
 
   if (plotSettings.value("curveStyle", "dots") == "lines")
   {

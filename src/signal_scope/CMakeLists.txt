@@ -1,20 +1,48 @@
 find_package(Qt4 REQUIRED QtCore QtGui QtScript)
 include(${QT_USE_FILE})
 
-find_package(PkgConfig)
-pkg_check_modules(DRCLCMTYPES drc-lcmtypes)
+find_package(LCM REQUIRED)
 
-link_directories(${DRCLCMTYPES_LIBRARY_DIRS})
-include_directories(${DRCLCMTYPES_INCLUDE_DIRS})
 
-find_path(QWT_INCLUDE_DIR qwt.h /usr/include/qwt)
+
+set(deps)
+
+if(USE_BUILTIN_LCMTYPES)
+
+  if(NOT DRCLCMTYPES_FOUND)
+    message(SEND_ERROR "USE_BUILTIN_LCMTYPES is enabled but drc lcmtypes is not found.")
+  endif()
+
+  link_directories(${DRCLCMTYPES_LIBRARY_DIRS})
+  include_directories(${DRCLCMTYPES_INCLUDE_DIRS})
+  list(APPEND deps ${DRCLCMTYPES_LIBRARIES})
+  add_definitions(-DUSE_BUILTIN_LCMTYPES)
+endif()
+
+
+find_path(QWT_INCLUDE_DIR qwt/qwt.h HINTS /usr/local/lib)
 find_library(QWT_LIBRARY qwt)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QWT_INCLUDE_DIR})
+include_directories(${LCM_INCLUDE_DIRS})
 
 if(USE_PYTHON)
-  find_package(PythonLibs REQUIRED)
+
+  if(APPLE)
+    find_program(PYTHON_CONFIG_EXECUTABLE python-config)
+    if (NOT PYTHON_CONFIG_EXECUTABLE)
+      message(SEND_ERROR "python-config executable not found, but python is required.")
+    endif()
+    # using "python-config --prefix" so that cmake always uses the python that is
+    # in the users path, this is a fix for homebrew on Mac:
+    # https://github.com/Homebrew/homebrew/issues/25118
+    execute_process(COMMAND ${PYTHON_CONFIG_EXECUTABLE} --prefix OUTPUT_VARIABLE python_prefix OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(PYTHON_INCLUDE_DIR ${python_prefix}/include/python2.7)
+    set(PYTHON_LIBRARY ${python_prefix}/lib/libpython2.7${CMAKE_SHARED_LIBRARY_SUFFIX})
+  endif()
+
+  find_package(PythonLibs 2.7 REQUIRED)
   find_package(PythonQt REQUIRED)
   find_package(CTKPythonConsole REQUIRED)
 
@@ -27,6 +55,7 @@ if(USE_PYTHON)
     pythonsignalhandler.h
     pythonchannelsubscribercollection.h
     pythonchannelsubscriber.h
+    pythonmessageinspector.h
     )
   set(python_srcs)
 endif()
@@ -50,9 +79,14 @@ qt4_wrap_ui(ui_srcs
   selectsignaldialog.ui
   )
 
+qt4_add_resources(resource_srcs
+  resources.qrc
+  )
+
 set(srcs
   ${moc_srcs}
   ${ui_srcs}
+  ${resource_srcs}
   curvedata.cpp
   jointnames.cpp
   main.cpp
@@ -68,8 +102,21 @@ set(srcs
   ${python_srcs}
   )
 
+if (USE_BUILTIN_LCMTYPES)
+  list(APPEND srcs builtinmessages.cpp)
+endif()
+
+
+list(APPEND deps
+  ${QT_LIBRARIES}
+  ${QWT_LIBRARY}
+  ${python_deps}
+  ${LCM_LIBRARIES}
+  )
+
+
 add_executable(signal-scope ${srcs})
-target_link_libraries(signal-scope ${QT_LIBRARIES} ${QWT_LIBRARY} ${DRCLCMTYPES_LIBRARIES} ${python_deps})
+target_link_libraries(signal-scope ${deps})
 
 
 pods_install_headers(

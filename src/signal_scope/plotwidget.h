@@ -3,7 +3,7 @@
 
 #include <qwidget.h>
 #include <qmap.h>
-#include <qwt_plot_curve.h>
+#include <qwt/qwt_plot_curve.h>
 
 class Plot;
 class Knob;
@@ -24,7 +24,6 @@ public:
 
   void start();
   void stop();
-  void stopThreads();
 
   void replot();
 
@@ -62,6 +61,9 @@ public slots:
   void onSignalListItemChanged(QListWidgetItem* item);
   void updateSignalInfoLabel();
   void onResetYAxisScale();
+  void setYAxisScale(double lower, double upper);
+
+  void setTimeWindow(double timeWindow);
 
 signals:
 

@@ -1,10 +1,10 @@
 #ifndef _PLOT_H_
 #define _PLOT_H_
 
-#include <qwt_plot.h>
-#include <qwt_interval.h>
-#include <qwt_system_clock.h>
-#include <qwt_plot_curve.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_interval.h>
+#include <qwt/qwt_system_clock.h>
+#include <qwt/qwt_plot_curve.h>
 
 class QwtPlotCurve;
 class QwtPlotMarker;

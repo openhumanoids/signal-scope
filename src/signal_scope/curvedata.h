@@ -1,4 +1,4 @@
-#include <qwt_series_data.h>
+#include <qwt/qwt_series_data.h>
 
 class SignalData;
 

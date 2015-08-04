@@ -11,12 +11,6 @@ class SignalData;
 class SignalDescription;
 
 
-namespace
-{
-  uint64_t timeOffset = 0;
-}
-
-
 class PythonSignalHandler : public SignalHandler
 {
   Q_OBJECT
@@ -30,7 +24,7 @@ public:
 
   virtual QString description()
   {
-    return mDescription.descriptionString();
+    return mDescription.mFieldName;
   }
 
   void onNewMessage(const QVariant& message)
@@ -51,8 +45,6 @@ public:
 
   virtual bool extractSignalData(const QVariant& message, double& timeNow, double& signalValue)
   {
-    //printf("calling python handler...\n");
-
     QVariantList args;
     args << message;
 
@@ -60,14 +52,9 @@ public:
     QList<QVariant> values = result.toList();
     if (values.size() == 2)
     {
-
-      quint64 msgUtime = values[0].toULongLong();
-
-      if (timeOffset == 0) timeOffset = msgUtime;
-      timeNow = (msgUtime - timeOffset)/1e6;
-      signalValue = values[1].toDouble();
-
-      //printf("%f, %f\n", timeNow, signalValue);
+      timeNow = SignalHandlerFactory::instance().getOffsetTime(static_cast<int64_t>(values[0].toDouble()*1e6));
+      signalValue = values[1].value<double>();
+      //std::cout << timeNow << ", " << signalValue << std::endl;
       return true;
     }
     else
