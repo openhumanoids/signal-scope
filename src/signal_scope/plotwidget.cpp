@@ -27,8 +27,8 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   d_plot = new Plot(this);
 
-  mColors << Qt::green
-          << Qt::red
+  mColors << Qt::red
+          << Qt::green
           << Qt::blue
           << Qt::cyan
           << Qt::magenta
