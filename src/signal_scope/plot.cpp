@@ -60,6 +60,8 @@ public:
         widgetMouseReleaseEvent( ( QMouseEvent * )event );
         break;
       }
+      default:
+        break;
     }
 
     return false;
@@ -76,8 +78,15 @@ public:
     for ( int axis = 0; axis < QwtPlot::axisCnt; axis++ )
     {
       const QwtScaleMap map = mPlot->canvasMap( axis );
-      const double p1 = map.transform( mPlot->axisScaleDiv( axis )->lowerBound() );
-      const double p2 = map.transform( mPlot->axisScaleDiv( axis )->upperBound() );
+
+      #if QWT_VERSION < 0x060102
+      const QwtScaleDiv* scaleDiv = mPlot->axisScaleDiv( axis );
+      #else
+      const QwtScaleDiv* scaleDiv = &mPlot->axisScaleDiv( axis );
+      #endif
+
+      const double p1 = map.transform( scaleDiv->lowerBound() );
+      const double p2 = map.transform( scaleDiv->upperBound() );
 
       double d1, d2;
       if ( axis == QwtPlot::xBottom || axis == QwtPlot::xTop )
@@ -208,7 +217,8 @@ Plot::Plot(QWidget *parent):
   mStopped(true),
   mAxisSyncRequired(false),
   mColorMode(0),
-  mTimeWindow(10.0)
+  mTimeWindow(10.0),
+  mAlignMode(RIGHT)
 {
   setAutoReplot(false);
 
@@ -217,14 +227,16 @@ Plot::Plot(QWidget *parent):
   // Here we don't have them and the internal 
   // backing store of QWidget is good enough.
 
-  canvas()->setPaintAttribute(QwtPlotCanvas::BackingStore, false);
+  QwtPlotCanvas* plotCanvas = qobject_cast<QwtPlotCanvas*>(canvas());
+
+  plotCanvas->setPaintAttribute(QwtPlotCanvas::BackingStore, false);
 
 
 #if defined(Q_WS_X11)
   // Even if not recommended by TrollTech, Qt::WA_PaintOutsidePaintEvent
   // works on X11. This has a nice effect on the performance.
 
-  canvas()->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
+  plotCanvas->setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
   // Disabling the backing store of Qt improves the performance
   // for the direct painter even more, but the canvas becomes
@@ -234,10 +246,10 @@ Plot::Plot(QWidget *parent):
   // the canvas is disabled. So in this application
   // we better don't both backing stores.
 
-  if ( canvas()->testPaintAttribute( QwtPlotCanvas::BackingStore ) )
+  if ( plotCanvas->testPaintAttribute( QwtPlotCanvas::BackingStore ) )
   {
-    canvas()->setAttribute(Qt::WA_PaintOnScreen, true);
-    canvas()->setAttribute(Qt::WA_NoSystemBackground, true);
+    plotCanvas->setAttribute(Qt::WA_PaintOnScreen, true);
+    plotCanvas->setAttribute(Qt::WA_NoSystemBackground, true);
   }
 
 #endif
@@ -258,10 +270,10 @@ Plot::Plot(QWidget *parent):
   initBackground();
 
   QwtPlotZoomer* zoomer = new MyZoomer(this);
-  zoomer->setMousePattern(QwtEventPattern::QwtEventPattern::MouseSelect1,
-      Qt::LeftButton, Qt::ShiftModifier);
+  zoomer->setMousePattern(QwtEventPattern::QwtEventPattern::MouseSelect1, Qt::LeftButton, Qt::ShiftModifier);
+
   // disable MouseSelect3 action of the zoomer
-  zoomer->setMousePattern(QwtEventPattern::MouseSelect3, 0);
+  zoomer->setMousePattern(QwtEventPattern::MouseSelect3, Qt::NoButton);
 
   MyPanner *panner = new MyPanner(this);
 

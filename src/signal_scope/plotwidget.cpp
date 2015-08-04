@@ -7,7 +7,6 @@
 #include "signaldescription.h"
 #include "pythonchannelsubscribercollection.h"
 
-#include <qwt_scale_engine.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QDoubleSpinBox>
