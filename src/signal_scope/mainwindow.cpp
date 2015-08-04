@@ -7,6 +7,10 @@
 #include "signaldescription.h"
 #include "lcmthread.h"
 
+#if USE_BUILTIN_LCMTYPES
+  #include "builtinmessages.h"
+#endif
+
 #include <QLabel>
 #include <QLayout>
 #include <QApplication>
@@ -53,6 +57,10 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
 
   this->initPython();
 
+#if USE_BUILTIN_LCMTYPES
+  BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory::instance());
+  BuiltinMessages::registerBuiltinChannels(SignalHandlerFactory::instance());
+#endif
 
   mScrollArea = new QScrollArea;
   mPlotArea = new QWidget;

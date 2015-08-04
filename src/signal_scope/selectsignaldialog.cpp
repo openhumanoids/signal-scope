@@ -21,44 +21,22 @@ SelectSignalDialog::SelectSignalDialog(QWidget* parent) : QDialog(parent)
   mInternal = new Internal;
   mInternal->setupUi(this);
 
-  QStringList channels;
-  channels << "ATLAS_COMMAND" << "ATLAS_FOOT_POS_EST"
-           << "ATLAS_IMU_PACKET" << "ATLAS_IMU_PACKET_FILTERED"
-           << "ATLAS_STATE" << "ATLAS_STATE_FILTERED" << "ATLAS_STATE_FILTERED_ALT"    
-           << "ATLAS_STATE_AS_LOGGED"
-           << "ATLAS_STATE_EXTRA"
-           << "ATLAS_STATUS" << "EST_ROBOT_STATE" 
-           << "EST_ROBOT_STATE_KF" << "EST_ROBOT_STATE_LP" << "EST_ROBOT_STATE_ECHO" 
-           << "EXPD_ROBOT_STATE"
-           << "FOOT_CONTACT_ESTIMATE" << "FOOT_CONTACT_CLASSIFY" 
-           << "FORCE_PLATE_DATA" 
-           << "INS_ERR_UPDATE" << "LATENCY"
-           << "MICROSTRAIN_INS" << "MICROSTRAIN_INS_DIFF" << "MICROSTRAIN_INS_ACC_TEST" << "MICROSTRAIN_INS_VEL_TEST"
-           << "POSE_BDI"
-           << "POSE_BODY" << "POSE_BODY_ALT"
-           << "POSE_BODY_FOVIS_VELOCITY"  << "POSE_IMU_VELOCITY"
-           << "POSE_BODY_LEGODO_VELOCITY" << "POSE_BODY_LEGODO_VELOCITY_FAIL"  
-           << "POSE_VICON"
-           << "LOCK_ERROR"
-           << "SCALED_ROBOT_STATE" 
-           << "SE_INS_POSE_STATE" << "SE_MATLAB_DATAFUSION_REQ"
-           << "STATE_ESTIMATOR_POSE"
-           << "STATE_ESTIMATOR_STATE"
-           << "TRUE_ROBOT_STATE"
-           << "VICON_ATLAS" << "CONTROLLER_DEBUG"
-           << "ROBOTIQ_LEFT_STATUS" << "ROBOTIQ_RIGHT_STATUS" ;
 
 
+  QStringList channels = SignalHandlerFactory::instance().channels();
   QStringList messageTypes = SignalHandlerFactory::instance().messageTypes();
-  QStringList messageFields;
+  //QStringList messageFields;
+
+  channels.sort();
+  messageTypes.sort();
 
   mInternal->ChannelListBox->addItems(channels);
   mInternal->MessageTypeListBox->addItems(messageTypes);
-  mInternal->MessageFieldListBox->addItems(messageFields);
+  //mInternal->MessageFieldListBox->addItems(messageFields);
 
   mInternal->ChannelListBox->setCurrentRow(0);
   mInternal->MessageTypeListBox->setCurrentRow(0);
-  mInternal->MessageFieldListBox->setCurrentRow(0);
+  //mInternal->MessageFieldListBox->setCurrentRow(0);
 
   this->connect(mInternal->MessageTypeListBox, SIGNAL(currentRowChanged(int)), SLOT(onMessageTypeChanged()));
   this->connect(mInternal->MessageFieldListBox, SIGNAL(currentRowChanged(int)), SLOT(onFieldNameChanged()));

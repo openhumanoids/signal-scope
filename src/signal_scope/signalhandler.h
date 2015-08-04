@@ -63,9 +63,17 @@ public:
 
     static SignalHandlerFactory& instance();
 
-    QList<QString> messageTypes() { return mConstructors.keys(); }
-    QList<QString> fieldNames(const QString& messageType) { return mConstructors.value(messageType).keys(); }
-    const QList<QList<QString> >& validArrayKeys(const QString& messageType, const QString& fieldName) { return mValidArrayKeys[messageType][fieldName]; }
+    QList<QString> messageTypes() const { return mConstructors.keys(); }
+    QList<QString> channels() const { return mChannels; }
+    QList<QString> fieldNames(const QString& messageType) const { return mConstructors.value(messageType).keys(); }
+    QList<QList<QString> > validArrayKeys(const QString& messageType, const QString& fieldName) const { return mValidArrayKeys[messageType][fieldName]; }
+
+    void addChannel(const QString& channel) { mChannels.append(channel); };
+    void addChannels(const QList<QString>& channels) { mChannels += channels; };
+
+    void setTimeZero(int64_t offset) { mTimeOffset = offset; }
+    int64_t getTimeZero() const { return mTimeOffset; }
+    double getOffsetTime(int64_t messageTime);
 
 private:
   typedef SignalHandler* (*Constructor)(const SignalDescription* desc);
@@ -76,46 +84,11 @@ private:
     return new T(desc);
   }
 
+  int64_t mTimeOffset;
+  QStringList mChannels;
   QHash<QString, QHash<QString, Constructor> > mConstructors;
   QHash<QString, QHash<QString, QList<QList<QString> >  > > mValidArrayKeys;
 };
-
-
-//-----------------------------------------------------------------------------
-#define declare_signal_handler(className) \
-class className : public SignalHandler \
-{ \
-public: \
-  className(const SignalDescription* desc); \
-  virtual bool extractSignalData(const lcm::ReceiveBuffer* rbuf, double& timeNow, double& signalValue); \
-  static QString messageType(); \
-  static QString fieldName(); \
-  static QList<QList<QString> > validArrayKeys(); \
-  virtual QString description(); \
-protected: \
-  int mArrayIndex; \
-  int mArrayIndex2; \
-  QString mArrayKey; \
-  QString mArrayKey2; \
-};
-
-
-/*
-declare_signal_handler(RobotStateJointPositionHandler);
-declare_signal_handler(RobotStateJointVelocityHandler);
-declare_signal_handler(RobotStateJointEffortHandler);
-
-declare_signal_handler(RobotStatePoseTranslationXHandler);
-declare_signal_handler(RobotStatePoseTranslationYHandler);
-declare_signal_handler(RobotStatePoseTranslationZHandler);
-
-declare_signal_handler(RobotStatePoseRotationWHandler);
-declare_signal_handler(RobotStatePoseRotationXHandler);
-declare_signal_handler(RobotStatePoseRotationYHandler);
-declare_signal_handler(RobotStatePoseRotationZHandler);
-
-*/
-
 
 
 #endif

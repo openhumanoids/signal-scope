@@ -2,14 +2,23 @@ find_package(Qt4 REQUIRED QtCore QtGui QtScript)
 include(${QT_USE_FILE})
 
 find_package(LCM REQUIRED)
-find_package(PkgConfig)
-pkg_check_modules(DRCLCMTYPES drc-lcmtypes)
 
-link_directories(${DRCLCMTYPES_LIBRARY_DIRS})
-include_directories(${DRCLCMTYPES_INCLUDE_DIRS})
 
 
 set(deps)
+
+if(USE_BUILTIN_LCMTYPES)
+
+  if(NOT DRCLCMTYPES_FOUND)
+    message(SEND_ERROR "USE_BUILTIN_LCMTYPES is enabled but drc lcmtypes is not found.")
+  endif()
+
+  link_directories(${DRCLCMTYPES_LIBRARY_DIRS})
+  include_directories(${DRCLCMTYPES_INCLUDE_DIRS})
+  list(APPEND deps ${DRCLCMTYPES_LIBRARIES})
+  add_definitions(-DUSE_BUILTIN_LCMTYPES)
+endif()
+
 
 find_path(QWT_INCLUDE_DIR qwt/qwt.h HINTS /usr/local/lib)
 find_library(QWT_LIBRARY qwt)
@@ -86,6 +95,10 @@ set(srcs
   selectsignaldialog.cpp
   ${python_srcs}
   )
+
+if (USE_BUILTIN_LCMTYPES)
+  list(APPEND srcs builtinmessages.cpp)
+endif()
 
 
 list(APPEND deps
