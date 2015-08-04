@@ -39,8 +39,10 @@ public slots:
   void onRemovePlot(PlotWidget* plot);
   void onAddSignalToPlot(PlotWidget* plot);
   void onRemoveAllPlots();
+  void onResetTimeZero();
 
   void onChooseBackgroundColor();
+  void onChooseHistoryLength();
   void onChoosePointSize();
 
 protected slots:

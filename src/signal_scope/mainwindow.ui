@@ -40,6 +40,8 @@
     <addaction name="ActionAddPlot"/>
     <addaction name="separator"/>
     <addaction name="ActionClearHistory"/>
+    <addaction name="ActionSetHistoryLength"/>
+    <addaction name="ActionResetTimeZero"/>
     <addaction name="separator"/>
     <addaction name="ActionPause"/>
    </widget>
@@ -133,6 +135,16 @@
   <action name="ActionPointSize">
    <property name="text">
     <string>Point size...</string>
+   </property>
+  </action>
+  <action name="ActionResetTimeZero">
+   <property name="text">
+    <string>Reset time zero</string>
+   </property>
+  </action>
+  <action name="ActionSetHistoryLength">
+   <property name="text">
+    <string>Set history length...</string>
    </property>
   </action>
  </widget>

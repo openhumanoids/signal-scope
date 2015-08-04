@@ -85,8 +85,11 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   this->connect(mInternal->ActionPause, SIGNAL(triggered()), SLOT(onTogglePause()));
   this->connect(mInternal->ActionAddPlot, SIGNAL(triggered()), SLOT(onNewPlotClicked()));
   this->connect(mInternal->ActionClearHistory, SIGNAL(triggered()), SLOT(onClearHistory()));
+  this->connect(mInternal->ActionResetTimeZero, SIGNAL(triggered()), SLOT(onResetTimeZero()));
 
   this->connect(mInternal->ActionBackgroundColor, SIGNAL(triggered()), SLOT(onChooseBackgroundColor()));
+  this->connect(mInternal->ActionSetHistoryLength, SIGNAL(triggered()), SLOT(onChooseHistoryLength()));
+
 
   mInternal->toolBar->addSeparator();
   mInternal->toolBar->addWidget(new QLabel("    Style: "));
@@ -288,6 +291,17 @@ void MainWindow::onChoosePointSize()
     {
       plot->setPointSize(pointSize - 1);
     }
+  }
+}
+
+void MainWindow::onChooseHistoryLength()
+{
+  bool ok;
+  int defaultHistoryLength = SignalData::getHistoryLength();
+  int historyLength = QInputDialog::getInt(this, "Choose history length", "History length (seconds)", defaultHistoryLength, 1, 60*60, 1, &ok);
+  if (ok)
+  {
+    SignalData::setHistoryLength(historyLength);
   }
 }
 
@@ -518,6 +532,12 @@ void MainWindow::onAddSignalToPlot(PlotWidget* plot)
   {
     plot->addSignal(signalHandler);
   }
+}
+
+void MainWindow::onResetTimeZero()
+{
+  SignalHandlerFactory::instance().setTimeZero(0);
+  this->onClearHistory();
 }
 
 void MainWindow::onRemoveAllPlots()
