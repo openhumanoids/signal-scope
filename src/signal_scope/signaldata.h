@@ -28,6 +28,9 @@ public:
 
     void updateInterval(double minTime, double maxTime);
 
+    static int getHistoryLength();
+    static void setHistoryLength(int historyLength);
+
     void clear();
 
     // computes the min and max values.

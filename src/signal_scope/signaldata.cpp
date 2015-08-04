@@ -36,7 +36,13 @@ public:
   double lastSampleTime;
 
   FPSCounter fpsCounter;
+
 };
+
+namespace {
+  int signalHistoryLength = 60*5;
+};
+
 
 SignalData::SignalData()
 {
@@ -46,6 +52,16 @@ SignalData::SignalData()
 SignalData::~SignalData()
 {
   delete d_data;
+}
+
+int SignalData::getHistoryLength()
+{
+  return signalHistoryLength;
+}
+
+void SignalData::setHistoryLength(int historyLength)
+{
+  signalHistoryLength = historyLength;
 }
 
 int SignalData::size() const
@@ -190,7 +206,7 @@ void SignalData::updateValues()
   }
 
   // All values that are older than five minutes will expire
-  double expireTime = xvalues.back() - 60*5;
+  double expireTime = xvalues.back() - signalHistoryLength;
 
   int idx = 0;
   while (idx < xvalues.size() && xvalues[idx] < expireTime)
