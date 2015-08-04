@@ -456,7 +456,7 @@ void MainWindow::saveSettings(const QString& filename)
   settings["windowHeight"] = this->height();
   if (this->mLastPythonScript.length())
   {
-    settings["script"] = this->mLastPythonScript;
+    settings["script"] = QFileInfo(this->mLastPythonScript).canonicalFilePath();
   }
 
   QList<QVariant> plotSettings;
