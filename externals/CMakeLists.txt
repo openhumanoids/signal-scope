@@ -17,11 +17,10 @@ set(source_prefix ${Superbuild_BINARY_DIR}/src)
 set(install_prefix ${CMAKE_INSTALL_PREFIX})
 
 
-
 ###############################################################################
 # options
-option(USE_SYSTEM_LCM "Use system version of lcm.  If off, lcm will be built." ON)
-option(BUILD_DEPENDENCIES_ONLY "Only build dependencies.  If off, signal-scope will be built." ON)
+option(BUILD_LCM "Build LCM.  If OFF, then you must have LCM system installed." OFF)
+option(BUILD_SIGNAL_SCOPE "Build signal-scope.  If OFF, only builds dependencies." OFF)
 
 
 ###############################################################################
@@ -66,18 +65,20 @@ set(python_args
 
 ###############################################################################
 # lcm
-if (NOT USE_SYSTEM_LCM)
+if (BUILD_LCM)
 
   ExternalProject_Add(
     lcm
-    URL https://github.com/lcm-proj/lcm/archive/v1.2.1.tar.gz
-    URL_MD5 b8c94d8ae0ed70f104a59522be20a073
+    URL https://github.com/lcm-proj/lcm/releases/download/v1.2.1/lcm-1.2.1.zip
+    URL_MD5 4355889a2367697a9458e83f6251f2b2
     CONFIGURE_COMMAND ${source_prefix}/lcm/configure --prefix=${install_prefix}
+    BUILD_IN_SOURCE 1
   )
 
   set(lcm_depends lcm)
 
 endif()
+
 
 ###############################################################################
 # PythonQt
@@ -92,6 +93,7 @@ ExternalProject_Add(PythonQt
     -DPythonQt_Wrap_Qtgui:BOOL=ON
     -DPythonQt_Wrap_Qtuitools:BOOL=ON
   )
+
 
 ###############################################################################
 # ctkPythonConsole
@@ -109,9 +111,9 @@ ExternalProject_Add(ctkPythonConsole
 
 ###############################################################################
 # signal-scope
-if (NOT BUILD_DEPENDENCIES_ONLY)
-  ExternalProject_Add(signal_scope
-    SOURCE_DIR ${Superbuild_SOURCE_DIR}/../..
+if (BUILD_SIGNAL_SCOPE)
+  ExternalProject_Add(signal-scope
+    SOURCE_DIR ${Superbuild_SOURCE_DIR}/..
     CMAKE_CACHE_ARGS
       ${default_cmake_args}
       ${qt_args}
