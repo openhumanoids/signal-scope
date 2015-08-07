@@ -8,7 +8,7 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 
 
 find_package(PkgConfig)
-pkg_check_modules(DRCLCMTYPES drc-lcmtypes)
+pkg_check_modules(DRCLCMTYPES lcmtypes_pronto-lcmtypes)
 set(use_builtin_lcmtypes_default OFF)
 if(DRCLCMTYPES_FOUND)
   set(use_builtin_lcmtypes_default ON)
