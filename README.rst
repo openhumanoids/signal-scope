@@ -15,7 +15,7 @@ The required system dependencies are:
 
 To install dependencies on Ubuntu::
 
-  sudo apt-get install libpython-dev libqt4-dev libqwt-dev
+  sudo apt-get install python-dev libqt4-dev libqwt-dev
 
 To install dependencies on Mac homebrew::
 
