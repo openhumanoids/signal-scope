@@ -162,7 +162,7 @@ def removePlots():
     _mainWindow.onRemoveAllPlots()
 
 
-def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True):
+def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True, label=None):
 
     if plot is None:
         plot = getPlot()
@@ -182,13 +182,13 @@ def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True)
     else:
         _signalFunction = signalFunction
 
-    _mainWindow.addPythonSignal(plot, [channel, _signalFunction, signalFunction.__doc__, color])
+    _mainWindow.addPythonSignal(plot, [channel, _signalFunction, label or signalFunction.__doc__, color])
 
 
-def addSignal(channel, timeLookup, valueLookup, plot=None, color=None):
+def addSignal(channel, timeLookup, valueLookup, plot=None, color=None, label=None):
 
     signalFunction = createSignalFunction(timeLookup, valueLookup)
-    addSignalFunction(channel, signalFunction, plot=plot, color=color, wrap=False)
+    addSignalFunction(channel, signalFunction, plot=plot, color=color, wrap=False, label=label)
 
 
 def addSignals(channel, timeLookup, valueLookup, keys, keyLookup=None, plot=None, colors=None):
