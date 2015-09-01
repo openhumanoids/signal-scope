@@ -7,7 +7,7 @@
 
 
 #include <lcmtypes/bot_core.hpp>
-#include <lcmtypes/microstrain_comm.hpp>
+#include <lcmtypes/microstrain.hpp>
 #include <lcmtypes/vicon.hpp>
 #include "lcmtypes/robotiqhand/status_t.hpp"
 #include "lcmtypes/drc/atlas_command_t.hpp"
