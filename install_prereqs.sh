@@ -4,7 +4,7 @@ case $1 in
   ("homebrew")
     brew install qt qwt ;;
   ("macports")
-    echo "WARNING: install_prereqs macports not implemented for this module" ;;
+    port install qt4-mac qwt ;;
   ("ubuntu")
     apt-get install python-dev libqt4-dev libqwt-dev ;;
   ("cygwin")
