@@ -294,7 +294,7 @@ void MainWindow::onClearHistory()
 
 QString MainWindow::defaultSettingsDir()
 {
-  QString configDir = qgetenv("DRC_BASE") + "/software/config/signal_scope_configs";
+  QString configDir = qgetenv("DRC_BASE") + "/software/config/signal_scope/json";
   if (QDir(configDir).exists())
   {
     return QDir(configDir).canonicalPath();
