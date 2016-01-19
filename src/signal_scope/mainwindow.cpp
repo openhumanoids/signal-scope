@@ -247,9 +247,11 @@ void MainWindow::loadPythonScript(const QString& filename)
 {
   if (QFileInfo(filename).exists())
   {
+    this->mLCMThread->pause();
     this->mLastPythonScript = filename;
     this->onRemoveAllPlots();
     this->mPythonManager->executeFile(filename);
+    this->mLCMThread->resume();
   }
   else
   {
