@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+import time
 import traceback
 from PythonQt import QtGui
 
@@ -64,6 +65,12 @@ def getMessageType(typeName):
     for cls in _messageTypes.values():
         if cls.__name__ == typeName:
             return cls
+
+
+class LocalTimeHelper(object):
+
+  def _getResolverFunction(self):
+      return lambda x: time.time()*1e6
 
 
 class LookupHelper(object):
@@ -138,7 +145,7 @@ def decodeMessageFunction(messageBytes):
 
 
 msg = LookupHelper()
-
+tNow = LocalTimeHelper()
 
 def addPlot(timeWindow=None, yLimits=None):
     plot = _mainWindow.addPlot()
