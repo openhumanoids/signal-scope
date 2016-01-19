@@ -79,7 +79,7 @@ public:
     {
       const QwtScaleMap map = mPlot->canvasMap( axis );
 
-      #if QWT_VERSION < 0x060102
+      #if QWT_VERSION < 0x060100
       const QwtScaleDiv* scaleDiv = mPlot->axisScaleDiv( axis );
       #else
       const QwtScaleDiv* scaleDiv = &mPlot->axisScaleDiv( axis );
