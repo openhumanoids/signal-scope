@@ -21,9 +21,9 @@
 #include "lcmtypes/drc/atlas_command_t.hpp"
 
 // Do be removed:
-#include "lcmtypes/atlas/status_t.hpp"
-#include "lcmtypes/atlas/state_t.hpp"
-#include "lcmtypes/atlas/state_extra_t.hpp"
+//#include "lcmtypes/atlas/status_t.hpp"
+//#include "lcmtypes/atlas/state_t.hpp"
+//#include "lcmtypes/atlas/state_extra_t.hpp"
 
 
 
@@ -303,25 +303,23 @@ define_field_array_handler(RobotStateForceTorqueRHandTorqueHandler, drc::robot_s
 
 
 // atlas_state_t
+//define_array_handler(AtlasStateJointPositionHandler, atlas::state_t, joint_position, JointNames::jointNames());
+//define_array_handler(AtlasStateJointVelocityHandler, atlas::state_t, joint_velocity, JointNames::jointNames());
+//define_array_handler(AtlasStateJointEffortHandler, atlas::state_t, joint_effort, JointNames::jointNames());
 
-define_array_handler(AtlasStateJointPositionHandler, atlas::state_t, joint_position, JointNames::jointNames());
-define_array_handler(AtlasStateJointVelocityHandler, atlas::state_t, joint_velocity, JointNames::jointNames());
-define_array_handler(AtlasStateJointEffortHandler, atlas::state_t, joint_effort, JointNames::jointNames());
+//define_field_field_handler(AtlasStateForceTorqueLFootForceZHandler, atlas::state_t, force_torque, l_foot_force_z);
+//define_field_field_handler(AtlasStateForceTorqueLFootTorqueXHandler, atlas::state_t, force_torque, l_foot_torque_x);
+//define_field_field_handler(AtlasStateForceTorqueLFootTorqueYHandler, atlas::state_t, force_torque, l_foot_torque_y);
 
-define_field_field_handler(AtlasStateForceTorqueLFootForceZHandler, atlas::state_t, force_torque, l_foot_force_z);
-define_field_field_handler(AtlasStateForceTorqueLFootTorqueXHandler, atlas::state_t, force_torque, l_foot_torque_x);
-define_field_field_handler(AtlasStateForceTorqueLFootTorqueYHandler, atlas::state_t, force_torque, l_foot_torque_y);
-
-define_field_field_handler(AtlasStateForceTorqueRFootForceZHandler, atlas::state_t, force_torque, r_foot_force_z);
-define_field_field_handler(AtlasStateForceTorqueRFootTorqueXHandler, atlas::state_t, force_torque, r_foot_torque_x);
-define_field_field_handler(AtlasStateForceTorqueRFootTorqueYHandler, atlas::state_t, force_torque, r_foot_torque_y);
+//define_field_field_handler(AtlasStateForceTorqueRFootForceZHandler, atlas::state_t, force_torque, r_foot_force_z);
+//define_field_field_handler(AtlasStateForceTorqueRFootTorqueXHandler, atlas::state_t, force_torque, r_foot_torque_x);
+//define_field_field_handler(AtlasStateForceTorqueRFootTorqueYHandler, atlas::state_t, force_torque, r_foot_torque_y);
 
 // atlas_state_extra_t
-
-define_array_handler(AtlasStateExtraJointPositionOutHandler, atlas::state_extra_t, joint_position_out, JointNames::jointNames());
-define_array_handler(AtlasStateExtraJointVelocityOutHandler, atlas::state_extra_t, joint_velocity_out, JointNames::jointNames());
-define_array_handler(AtlasStateExtraJointPressurePosHandler, atlas::state_extra_t, psi_pos, JointNames::jointNames());
-define_array_handler(AtlasStateExtraJointPressureNegHandler, atlas::state_extra_t, psi_neg, JointNames::jointNames());
+//define_array_handler(AtlasStateExtraJointPositionOutHandler, atlas::state_extra_t, joint_position_out, JointNames::jointNames());
+//define_array_handler(AtlasStateExtraJointVelocityOutHandler, atlas::state_extra_t, joint_velocity_out, JointNames::jointNames());
+//define_array_handler(AtlasStateExtraJointPressurePosHandler, atlas::state_extra_t, psi_pos, JointNames::jointNames());
+//define_array_handler(AtlasStateExtraJointPressureNegHandler, atlas::state_extra_t, psi_neg, JointNames::jointNames());
 
 // raw_imu_batch_t
 
@@ -354,12 +352,12 @@ define_array_handler(ViconBodyTransHandler, vicon::body_t, trans, createIndexLis
 define_array_handler(ViconBodyQuatHandler, vicon::body_t, quat, createIndexList(4));
 
 // atlas_status_t
-define_field_handler(AtlasStatusPumpInletPressure, atlas::status_t, pump_inlet_pressure);
-define_field_handler(AtlasStatusPumpSupplyPressure, atlas::status_t, pump_supply_pressure);
-define_field_handler(AtlasStatusPumpReturnPressure, atlas::status_t, pump_return_pressure);
-define_field_handler(AtlasStatusAirSumpPressure, atlas::status_t, air_sump_pressure);
-define_field_handler(AtlasStatusPumpRPM, atlas::status_t, current_pump_rpm);
-define_field_handler(AtlasStatusBehavior, atlas::status_t, behavior);
+//define_field_handler(AtlasStatusPumpInletPressure, atlas::status_t, pump_inlet_pressure);
+//define_field_handler(AtlasStatusPumpSupplyPressure, atlas::status_t, pump_supply_pressure);
+//define_field_handler(AtlasStatusPumpReturnPressure, atlas::status_t, pump_return_pressure);
+//define_field_handler(AtlasStatusAirSumpPressure, atlas::status_t, air_sump_pressure);
+//define_field_handler(AtlasStatusPumpRPM, atlas::status_t, current_pump_rpm);
+//define_field_handler(AtlasStatusBehavior, atlas::status_t, behavior);
 
 // controller_debug_t
 define_field_handler(ControllerDebugRightFoot, drc::controller_debug_t, r_foot_contact);
@@ -496,19 +494,19 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<RobotStateForceTorqueLHandTorqueHandler>();
     factory.registerClass<RobotStateForceTorqueRHandForceHandler>();
     factory.registerClass<RobotStateForceTorqueRHandTorqueHandler>();
-    factory.registerClass<AtlasStateJointPositionHandler>();
-    factory.registerClass<AtlasStateJointVelocityHandler>();
-    factory.registerClass<AtlasStateJointEffortHandler>();
-    factory.registerClass<AtlasStateForceTorqueLFootForceZHandler>();
-    factory.registerClass<AtlasStateForceTorqueLFootTorqueXHandler>();
-    factory.registerClass<AtlasStateForceTorqueLFootTorqueYHandler>();
-    factory.registerClass<AtlasStateForceTorqueRFootForceZHandler>();
-    factory.registerClass<AtlasStateForceTorqueRFootTorqueXHandler>();
-    factory.registerClass<AtlasStateForceTorqueRFootTorqueYHandler>();
-    factory.registerClass<AtlasStateExtraJointPositionOutHandler>();
-    factory.registerClass<AtlasStateExtraJointVelocityOutHandler>();
-    factory.registerClass<AtlasStateExtraJointPressurePosHandler>();
-    factory.registerClass<AtlasStateExtraJointPressureNegHandler>();
+//    factory.registerClass<AtlasStateJointPositionHandler>();
+//    factory.registerClass<AtlasStateJointVelocityHandler>();
+//    factory.registerClass<AtlasStateJointEffortHandler>();
+//    factory.registerClass<AtlasStateForceTorqueLFootForceZHandler>();
+//    factory.registerClass<AtlasStateForceTorqueLFootTorqueXHandler>();
+//    factory.registerClass<AtlasStateForceTorqueLFootTorqueYHandler>();
+//    factory.registerClass<AtlasStateForceTorqueRFootForceZHandler>();
+//    factory.registerClass<AtlasStateForceTorqueRFootTorqueXHandler>();
+//    factory.registerClass<AtlasStateForceTorqueRFootTorqueYHandler>();
+//    factory.registerClass<AtlasStateExtraJointPositionOutHandler>();
+//    factory.registerClass<AtlasStateExtraJointVelocityOutHandler>();
+//    factory.registerClass<AtlasStateExtraJointPressurePosHandler>();
+//    factory.registerClass<AtlasStateExtraJointPressureNegHandler>();
     factory.registerClass<AtlasRawIMUBatchIMUDeltaRotation>();
     factory.registerClass<AtlasRawIMUBatchIMULinearAcceleration>();
     factory.registerClass<AtlasRawIMUPacketDeltaRotation>();
@@ -524,12 +522,12 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<PoseTypeAcceleration>();
     factory.registerClass<ViconBodyTransHandler>();
     factory.registerClass<ViconBodyQuatHandler>();
-    factory.registerClass<AtlasStatusPumpInletPressure>();
-    factory.registerClass<AtlasStatusPumpSupplyPressure>();
-    factory.registerClass<AtlasStatusPumpReturnPressure>();
-    factory.registerClass<AtlasStatusAirSumpPressure>();
-    factory.registerClass<AtlasStatusPumpRPM>();
-    factory.registerClass<AtlasStatusBehavior>();
+//    factory.registerClass<AtlasStatusPumpInletPressure>();
+//    factory.registerClass<AtlasStatusPumpSupplyPressure>();
+//    factory.registerClass<AtlasStatusPumpReturnPressure>();
+//    factory.registerClass<AtlasStatusAirSumpPressure>();
+//    factory.registerClass<AtlasStatusPumpRPM>();
+//    factory.registerClass<AtlasStatusBehavior>();
     factory.registerClass<ControllerDebugRightFoot>();
     factory.registerClass<ControllerDebugLeftFoot>();
     factory.registerClass<ControllerDebugSolverInfo>();
