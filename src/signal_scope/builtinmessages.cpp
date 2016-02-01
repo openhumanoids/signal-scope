@@ -10,7 +10,7 @@
 #include <lcmtypes/microstrain.hpp>
 #include <lcmtypes/vicon.hpp>
 #include "lcmtypes/robotiqhand/status_t.hpp"
-#include "lcmtypes/mav/filter_state_t.hpp"
+#include "lcmtypes/pronto/filter_state_t.hpp"
 #include "lcmtypes/drc/foot_contact_estimate_t.hpp"
 #include "lcmtypes/drc/robot_state_t.hpp"
 #include "lcmtypes/drc/six_axis_force_torque_t.hpp"
@@ -405,8 +405,8 @@ define_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, drc::atla
 define_field_handler(FootContactLeft, drc::foot_contact_estimate_t, left_contact);
 define_field_handler(FootContactRight, drc::foot_contact_estimate_t, right_contact);
 
-// mav_filter_state_t
-define_array_handler(MavStateHandler, mav::filter_state_t, state, createIndexList(21));
+// pronto_filter_state_t
+define_array_handler(FilterStateHandler, pronto::filter_state_t, state, createIndexList(21));
 
 // robotiq_hand_status_t
 define_field_handler(RobotiqStatusCurrentA, robotiqhand::status_t, currentA);
@@ -550,7 +550,7 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<AtlasControlJointsDesiredControllerPeriodHandler>();
     factory.registerClass<FootContactLeft>();
     factory.registerClass<FootContactRight>();
-    factory.registerClass<MavStateHandler>();
+    factory.registerClass<FilterStateHandler>();
     factory.registerClass<RobotiqStatusCurrentA>();
     factory.registerClass<RobotiqStatusCurrentB>();
     factory.registerClass<RobotiqStatusCurrentC>();
