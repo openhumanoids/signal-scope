@@ -74,6 +74,7 @@ protected:
   void testPythonSignals();
   void initPython();
 
+  bool eventFilter(QObject* watched, QEvent* e);
 
 
   QList<SignalHandler*> getSignalSelectionFromUser();

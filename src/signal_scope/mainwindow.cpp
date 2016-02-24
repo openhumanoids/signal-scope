@@ -173,6 +173,22 @@ void MainWindow::handleCommandLineArgs()
   }
 }
 
+bool MainWindow::eventFilter(QObject* watched, QEvent* e)
+{
+  if(watched == this->mConsole && (e->type() == QEvent::Hide || e->type() == QEvent::Show))
+  {
+      if (e->type() == QEvent::Show)
+      {
+        mLCMThread->pause();
+      }
+      else
+      {
+        mLCMThread->resume();
+      }
+  }
+
+  return QObject::eventFilter(watched, e);
+}
 
 void MainWindow::initPython()
 {
@@ -185,6 +201,7 @@ void MainWindow::initPython()
   this->mConsole->setProperty("isInteractive", true);
   this->connect(new QShortcut(QKeySequence("F8"), this), SIGNAL(activated()), this->mConsole, SLOT(show()));
   this->connect(new QShortcut(QKeySequence("Ctrl+W"), this->mConsole), SIGNAL(activated()), this->mConsole, SLOT(close()));
+  this->mConsole->installEventFilter(this);
 
   QString closeShortcut = "Ctrl+D";
   #ifdef Q_OS_DARWIN
