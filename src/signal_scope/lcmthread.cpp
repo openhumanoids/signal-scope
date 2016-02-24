@@ -54,6 +54,7 @@ void LCMThread::run()
   {
     if (mShouldPause)
     {
+      mWaitCondition.wakeAll();
       this->waitForResume();
     }
 
@@ -74,7 +75,10 @@ void LCMThread::stop()
 
 void LCMThread::pause()
 {
+  mMutex.lock();
   mShouldPause = true;
+  mWaitCondition.wait(&mMutex, 100);
+  mMutex.unlock();
 }
 
 void LCMThread::waitForResume()
