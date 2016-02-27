@@ -7,25 +7,13 @@
 
 
 #include <lcmtypes/bot_core.hpp>
-#include <lcmtypes/microstrain.hpp>
 #include <lcmtypes/vicon.hpp>
-#include "lcmtypes/robotiqhand/status_t.hpp"
 #include "lcmtypes/pronto/filter_state_t.hpp"
-#include "lcmtypes/drc/foot_contact_estimate_t.hpp"
-#include "lcmtypes/drc/robot_state_t.hpp"
-#include "lcmtypes/drc/six_axis_force_torque_t.hpp"
-#include "lcmtypes/drc/controller_debug_t.hpp"
-#include "lcmtypes/drc/kvh_raw_imu_batch_t.hpp"
 
+#include "lcmtypes/drc/foot_contact_estimate_t.hpp"
+#include "lcmtypes/drc/controller_debug_t.hpp"
 // Do be depreciated
 #include "lcmtypes/drc/atlas_command_t.hpp"
-
-// Do be removed:
-//#include "lcmtypes/atlas/status_t.hpp"
-//#include "lcmtypes/atlas/state_t.hpp"
-//#include "lcmtypes/atlas/state_extra_t.hpp"
-
-
 
 namespace
 {
@@ -266,73 +254,51 @@ QString className::description() { return QString("%1.%2").arg(this->messageType
 
 // robot_state_t
 
-define_array_handler(RobotStateJointPositionHandler, drc::robot_state_t, joint_position, JointNames::jointNames());
-define_array_handler(RobotStateJointVelocityHandler, drc::robot_state_t, joint_velocity, JointNames::jointNames());
-define_array_handler(RobotStateJointEffortHandler, drc::robot_state_t, joint_effort, JointNames::jointNames());
+define_array_handler(RobotStateJointPositionHandler, bot_core::robot_state_t, joint_position, JointNames::jointNames());
+define_array_handler(RobotStateJointVelocityHandler, bot_core::robot_state_t, joint_velocity, JointNames::jointNames());
+define_array_handler(RobotStateJointEffortHandler, bot_core::robot_state_t, joint_effort, JointNames::jointNames());
 
-define_field_field_field_handler(RobotStatePoseTranslationXHandler, drc::robot_state_t, pose, translation, x);
-define_field_field_field_handler(RobotStatePoseTranslationYHandler, drc::robot_state_t, pose, translation, y);
-define_field_field_field_handler(RobotStatePoseTranslationZHandler, drc::robot_state_t, pose, translation, z);
+define_field_field_field_handler(RobotStatePoseTranslationXHandler, bot_core::robot_state_t, pose, translation, x);
+define_field_field_field_handler(RobotStatePoseTranslationYHandler, bot_core::robot_state_t, pose, translation, y);
+define_field_field_field_handler(RobotStatePoseTranslationZHandler, bot_core::robot_state_t, pose, translation, z);
 
-define_field_field_field_handler(RobotStatePoseRotationWHandler, drc::robot_state_t, pose, rotation, w);
-define_field_field_field_handler(RobotStatePoseRotationXHandler, drc::robot_state_t, pose, rotation, x);
-define_field_field_field_handler(RobotStatePoseRotationYHandler, drc::robot_state_t, pose, rotation, y);
-define_field_field_field_handler(RobotStatePoseRotationZHandler, drc::robot_state_t, pose, rotation, z);
+define_field_field_field_handler(RobotStatePoseRotationWHandler, bot_core::robot_state_t, pose, rotation, w);
+define_field_field_field_handler(RobotStatePoseRotationXHandler, bot_core::robot_state_t, pose, rotation, x);
+define_field_field_field_handler(RobotStatePoseRotationYHandler, bot_core::robot_state_t, pose, rotation, y);
+define_field_field_field_handler(RobotStatePoseRotationZHandler, bot_core::robot_state_t, pose, rotation, z);
 
-define_field_field_field_handler(RobotStateTwistLinearVelocityXHandler, drc::robot_state_t, twist, linear_velocity, x);
-define_field_field_field_handler(RobotStateTwistLinearVelocityYHandler, drc::robot_state_t, twist, linear_velocity, y);
-define_field_field_field_handler(RobotStateTwistLinearVelocityZHandler, drc::robot_state_t, twist, linear_velocity, z);
+define_field_field_field_handler(RobotStateTwistLinearVelocityXHandler, bot_core::robot_state_t, twist, linear_velocity, x);
+define_field_field_field_handler(RobotStateTwistLinearVelocityYHandler, bot_core::robot_state_t, twist, linear_velocity, y);
+define_field_field_field_handler(RobotStateTwistLinearVelocityZHandler, bot_core::robot_state_t, twist, linear_velocity, z);
 
-define_field_field_field_handler(RobotStateTwistAngularVelocityXHandler, drc::robot_state_t, twist, angular_velocity, x);
-define_field_field_field_handler(RobotStateTwistAngularVelocityYHandler, drc::robot_state_t, twist, angular_velocity, y);
-define_field_field_field_handler(RobotStateTwistAngularVelocityZHandler, drc::robot_state_t, twist, angular_velocity, z);
+define_field_field_field_handler(RobotStateTwistAngularVelocityXHandler, bot_core::robot_state_t, twist, angular_velocity, x);
+define_field_field_field_handler(RobotStateTwistAngularVelocityYHandler, bot_core::robot_state_t, twist, angular_velocity, y);
+define_field_field_field_handler(RobotStateTwistAngularVelocityZHandler, bot_core::robot_state_t, twist, angular_velocity, z);
 
-define_field_field_handler(RobotStateForceTorqueLFootForceZHandler, drc::robot_state_t, force_torque, l_foot_force_z);
-define_field_field_handler(RobotStateForceTorqueLFootTorqueXHandler, drc::robot_state_t, force_torque, l_foot_torque_x);
-define_field_field_handler(RobotStateForceTorqueLFootTorqueYHandler, drc::robot_state_t, force_torque, l_foot_torque_y);
+define_field_field_handler(RobotStateForceTorqueLFootForceZHandler, bot_core::robot_state_t, force_torque, l_foot_force_z);
+define_field_field_handler(RobotStateForceTorqueLFootTorqueXHandler, bot_core::robot_state_t, force_torque, l_foot_torque_x);
+define_field_field_handler(RobotStateForceTorqueLFootTorqueYHandler, bot_core::robot_state_t, force_torque, l_foot_torque_y);
 
-define_field_field_handler(RobotStateForceTorqueRFootForceZHandler, drc::robot_state_t, force_torque, r_foot_force_z);
-define_field_field_handler(RobotStateForceTorqueRFootTorqueXHandler, drc::robot_state_t, force_torque, r_foot_torque_x);
-define_field_field_handler(RobotStateForceTorqueRFootTorqueYHandler, drc::robot_state_t, force_torque, r_foot_torque_y);
+define_field_field_handler(RobotStateForceTorqueRFootForceZHandler, bot_core::robot_state_t, force_torque, r_foot_force_z);
+define_field_field_handler(RobotStateForceTorqueRFootTorqueXHandler, bot_core::robot_state_t, force_torque, r_foot_torque_x);
+define_field_field_handler(RobotStateForceTorqueRFootTorqueYHandler, bot_core::robot_state_t, force_torque, r_foot_torque_y);
 
-define_field_array_handler(RobotStateForceTorqueLHandForceHandler, drc::robot_state_t, force_torque, l_hand_force, createIndexList(3));
-define_field_array_handler(RobotStateForceTorqueLHandTorqueHandler, drc::robot_state_t, force_torque, l_hand_torque, createIndexList(3));
-define_field_array_handler(RobotStateForceTorqueRHandForceHandler, drc::robot_state_t, force_torque, r_hand_force, createIndexList(3));
-define_field_array_handler(RobotStateForceTorqueRHandTorqueHandler, drc::robot_state_t, force_torque, r_hand_torque, createIndexList(3));
-
-
-
-// atlas_state_t
-//define_array_handler(AtlasStateJointPositionHandler, atlas::state_t, joint_position, JointNames::jointNames());
-//define_array_handler(AtlasStateJointVelocityHandler, atlas::state_t, joint_velocity, JointNames::jointNames());
-//define_array_handler(AtlasStateJointEffortHandler, atlas::state_t, joint_effort, JointNames::jointNames());
-
-//define_field_field_handler(AtlasStateForceTorqueLFootForceZHandler, atlas::state_t, force_torque, l_foot_force_z);
-//define_field_field_handler(AtlasStateForceTorqueLFootTorqueXHandler, atlas::state_t, force_torque, l_foot_torque_x);
-//define_field_field_handler(AtlasStateForceTorqueLFootTorqueYHandler, atlas::state_t, force_torque, l_foot_torque_y);
-
-//define_field_field_handler(AtlasStateForceTorqueRFootForceZHandler, atlas::state_t, force_torque, r_foot_force_z);
-//define_field_field_handler(AtlasStateForceTorqueRFootTorqueXHandler, atlas::state_t, force_torque, r_foot_torque_x);
-//define_field_field_handler(AtlasStateForceTorqueRFootTorqueYHandler, atlas::state_t, force_torque, r_foot_torque_y);
-
-// atlas_state_extra_t
-//define_array_handler(AtlasStateExtraJointPositionOutHandler, atlas::state_extra_t, joint_position_out, JointNames::jointNames());
-//define_array_handler(AtlasStateExtraJointVelocityOutHandler, atlas::state_extra_t, joint_velocity_out, JointNames::jointNames());
-//define_array_handler(AtlasStateExtraJointPressurePosHandler, atlas::state_extra_t, psi_pos, JointNames::jointNames());
-//define_array_handler(AtlasStateExtraJointPressureNegHandler, atlas::state_extra_t, psi_neg, JointNames::jointNames());
+define_field_array_handler(RobotStateForceTorqueLHandForceHandler, bot_core::robot_state_t, force_torque, l_hand_force, createIndexList(3));
+define_field_array_handler(RobotStateForceTorqueLHandTorqueHandler, bot_core::robot_state_t, force_torque, l_hand_torque, createIndexList(3));
+define_field_array_handler(RobotStateForceTorqueRHandForceHandler, bot_core::robot_state_t, force_torque, r_hand_force, createIndexList(3));
+define_field_array_handler(RobotStateForceTorqueRHandTorqueHandler, bot_core::robot_state_t, force_torque, r_hand_torque, createIndexList(3));
 
 // raw_imu_batch_t
-
-define_array_array_handler(AtlasRawIMUBatchIMUDeltaRotation, drc::kvh_raw_imu_batch_t, raw_imu, delta_rotation,  createIndexList(15), createIndexList(3));
-define_array_array_handler(AtlasRawIMUBatchIMULinearAcceleration, drc::kvh_raw_imu_batch_t, raw_imu, linear_acceleration, createIndexList(15), createIndexList(3));
+define_array_array_handler(AtlasRawIMUBatchIMUDeltaRotation, bot_core::kvh_raw_imu_batch_t, raw_imu, delta_rotation,  createIndexList(15), createIndexList(3));
+define_array_array_handler(AtlasRawIMUBatchIMULinearAcceleration, bot_core::kvh_raw_imu_batch_t, raw_imu, linear_acceleration, createIndexList(15), createIndexList(3));
 
 // atlas_raw_imu_t ( a single message broken out from the above message )
-define_array_handler(AtlasRawIMUPacketDeltaRotation, drc::kvh_raw_imu_t, delta_rotation, createIndexList(3));
-define_array_handler(AtlasRawIMUPacketLinearAcceleration, drc::kvh_raw_imu_t, linear_acceleration, createIndexList(3));
+define_array_handler(AtlasRawIMUPacketDeltaRotation, bot_core::kvh_raw_imu_t, delta_rotation, createIndexList(3));
+define_array_handler(AtlasRawIMUPacketLinearAcceleration, bot_core::kvh_raw_imu_t, linear_acceleration, createIndexList(3));
 
 // Different type
-define_array_handler(MicrostrainINSGyro, microstrain::ins_t, gyro, createIndexList(3));
-define_array_handler(MicrostrainINSAccel, microstrain::ins_t, accel, createIndexList(3));
+define_array_handler(MicrostrainINSGyro, bot_core::ins_t, gyro, createIndexList(3));
+define_array_handler(MicrostrainINSAccel, bot_core::ins_t, accel, createIndexList(3));
 
 // pose_t
 define_array_handler(PoseTypePositionHandler, bot_core::pose_t, pos, createIndexList(3));
@@ -342,22 +308,14 @@ define_array_handler(PoseTypeRotationRateHandler, bot_core::pose_t, rotation_rat
 define_array_handler(PoseTypeAcceleration, bot_core::pose_t, accel, createIndexList(3));
 
 // six_axis_force_torque_t
-define_array_handler(SixAxisForceTorqueTypeForceHandler, drc::six_axis_force_torque_t, force, createIndexList(3));
-define_array_handler(SixAxisForceTorqueTypeMomentHandler, drc::six_axis_force_torque_t, moment, createIndexList(3));
+define_array_handler(SixAxisForceTorqueTypeForceHandler, bot_core::six_axis_force_torque_t, force, createIndexList(3));
+define_array_handler(SixAxisForceTorqueTypeMomentHandler, bot_core::six_axis_force_torque_t, moment, createIndexList(3));
 
 
 
 // vicon body_t
 define_array_handler(ViconBodyTransHandler, vicon::body_t, trans, createIndexList(3));
 define_array_handler(ViconBodyQuatHandler, vicon::body_t, quat, createIndexList(4));
-
-// atlas_status_t
-//define_field_handler(AtlasStatusPumpInletPressure, atlas::status_t, pump_inlet_pressure);
-//define_field_handler(AtlasStatusPumpSupplyPressure, atlas::status_t, pump_supply_pressure);
-//define_field_handler(AtlasStatusPumpReturnPressure, atlas::status_t, pump_return_pressure);
-//define_field_handler(AtlasStatusAirSumpPressure, atlas::status_t, air_sump_pressure);
-//define_field_handler(AtlasStatusPumpRPM, atlas::status_t, current_pump_rpm);
-//define_field_handler(AtlasStatusBehavior, atlas::status_t, behavior);
 
 // controller_debug_t
 define_field_handler(ControllerDebugRightFoot, drc::controller_debug_t, r_foot_contact);
@@ -367,23 +325,6 @@ define_array_handler(ControllerDebugQddDes, drc::controller_debug_t, qddot_des, 
 define_array_handler(ControllerDebugU, drc::controller_debug_t, u, createIndexList(28));
 define_array_handler(ControllerDebugAlpha, drc::controller_debug_t, alpha, createIndexList(90));
 define_array_handler(ControllerDebugZMPerr, drc::controller_debug_t, zmp_err, createIndexList(2));
-
-/*
-define_field_array_handler(AtlasControlJointsPositionHandler, atlas::control_data_t, joints, position, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsVelocityHandler, atlas::control_data_t, joints, velocity, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsEffortHandler, atlas::control_data_t, joints, effort, JointNames::jointNames());
-
-define_field_array_handler(AtlasControlJointsKQPHandler, atlas::control_data_t, joints, k_q_p, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsKQIHandler, atlas::control_data_t, joints, k_q_i, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsKQDPHandler, atlas::control_data_t, joints, k_qd_p, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsKFPHandler, atlas::control_data_t, joints, k_f_p, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsFFQDHandler, atlas::control_data_t, joints, ff_qd, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsFFQDDPHandler, atlas::control_data_t, joints, ff_qd_d, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsFFFDHandler, atlas::control_data_t, joints, ff_f_d, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsFFConstHandler, atlas::control_data_t, joints, ff_const, JointNames::jointNames());
-define_field_array_handler(AtlasControlJointsKEffortHandler, atlas::control_data_t, joints, k_effort, JointNames::jointNames());
-define_field_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, atlas::control_data_t, joints, desired_controller_period_ms);
-*/
 
 define_array_handler(AtlasControlJointsPositionHandler, drc::atlas_command_t, position, JointNames::jointNames());
 define_array_handler(AtlasControlJointsVelocityHandler, drc::atlas_command_t, velocity, JointNames::jointNames());
@@ -400,18 +341,12 @@ define_array_handler(AtlasControlJointsFFConstHandler, drc::atlas_command_t, ff_
 define_array_handler(AtlasControlJointsKEffortHandler, drc::atlas_command_t, k_effort, JointNames::jointNames());
 define_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, drc::atlas_command_t, desired_controller_period_ms);
 
-
 // foot_contact_estimate_t
 define_field_handler(FootContactLeft, drc::foot_contact_estimate_t, left_contact);
 define_field_handler(FootContactRight, drc::foot_contact_estimate_t, right_contact);
 
 // pronto_filter_state_t
 define_array_handler(FilterStateHandler, pronto::filter_state_t, state, createIndexList(21));
-
-// robotiq_hand_status_t
-define_field_handler(RobotiqStatusCurrentA, robotiqhand::status_t, currentA);
-define_field_handler(RobotiqStatusCurrentB, robotiqhand::status_t, currentB);
-define_field_handler(RobotiqStatusCurrentC, robotiqhand::status_t, currentC);
 
 
 void BuiltinMessages::registerBuiltinChannels(SignalHandlerFactory& factory)
@@ -459,8 +394,6 @@ void BuiltinMessages::registerBuiltinChannels(SignalHandlerFactory& factory)
     << "TRUE_ROBOT_STATE"
     << "VICON_ATLAS"
     << "CONTROLLER_DEBUG"
-    << "ROBOTIQ_LEFT_STATUS"
-    << "ROBOTIQ_RIGHT_STATUS"
     ;
 
   factory.addChannels(channels);
@@ -494,19 +427,6 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<RobotStateForceTorqueLHandTorqueHandler>();
     factory.registerClass<RobotStateForceTorqueRHandForceHandler>();
     factory.registerClass<RobotStateForceTorqueRHandTorqueHandler>();
-//    factory.registerClass<AtlasStateJointPositionHandler>();
-//    factory.registerClass<AtlasStateJointVelocityHandler>();
-//    factory.registerClass<AtlasStateJointEffortHandler>();
-//    factory.registerClass<AtlasStateForceTorqueLFootForceZHandler>();
-//    factory.registerClass<AtlasStateForceTorqueLFootTorqueXHandler>();
-//    factory.registerClass<AtlasStateForceTorqueLFootTorqueYHandler>();
-//    factory.registerClass<AtlasStateForceTorqueRFootForceZHandler>();
-//    factory.registerClass<AtlasStateForceTorqueRFootTorqueXHandler>();
-//    factory.registerClass<AtlasStateForceTorqueRFootTorqueYHandler>();
-//    factory.registerClass<AtlasStateExtraJointPositionOutHandler>();
-//    factory.registerClass<AtlasStateExtraJointVelocityOutHandler>();
-//    factory.registerClass<AtlasStateExtraJointPressurePosHandler>();
-//    factory.registerClass<AtlasStateExtraJointPressureNegHandler>();
     factory.registerClass<AtlasRawIMUBatchIMUDeltaRotation>();
     factory.registerClass<AtlasRawIMUBatchIMULinearAcceleration>();
     factory.registerClass<AtlasRawIMUPacketDeltaRotation>();
@@ -522,12 +442,6 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<PoseTypeAcceleration>();
     factory.registerClass<ViconBodyTransHandler>();
     factory.registerClass<ViconBodyQuatHandler>();
-//    factory.registerClass<AtlasStatusPumpInletPressure>();
-//    factory.registerClass<AtlasStatusPumpSupplyPressure>();
-//    factory.registerClass<AtlasStatusPumpReturnPressure>();
-//    factory.registerClass<AtlasStatusAirSumpPressure>();
-//    factory.registerClass<AtlasStatusPumpRPM>();
-//    factory.registerClass<AtlasStatusBehavior>();
     factory.registerClass<ControllerDebugRightFoot>();
     factory.registerClass<ControllerDebugLeftFoot>();
     factory.registerClass<ControllerDebugSolverInfo>();
@@ -551,7 +465,4 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<FootContactLeft>();
     factory.registerClass<FootContactRight>();
     factory.registerClass<FilterStateHandler>();
-    factory.registerClass<RobotiqStatusCurrentA>();
-    factory.registerClass<RobotiqStatusCurrentB>();
-    factory.registerClass<RobotiqStatusCurrentC>();
 }
