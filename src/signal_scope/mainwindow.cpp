@@ -76,7 +76,6 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   mInternal->ActionOpenPython->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
   mInternal->ActionSave->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogSaveButton));
   mInternal->ActionPause->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
-  mInternal->ActionPause->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
   mInternal->ActionResize->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
   mInternal->ActionClearHistory->setIcon(qApp->style()->standardIcon(QStyle::SP_TrashIcon));
   mInternal->ActionAddPlot->setIcon(qApp->style()->standardIcon(QStyle::SP_TrashIcon));
