@@ -73,6 +73,7 @@
    <addaction name="ActionClearHistory"/>
    <addaction name="separator"/>
    <addaction name="ActionPause"/>
+   <addaction name="ActionResize"/>
   </widget>
   <action name="ActionOpen">
    <property name="text">
@@ -118,6 +119,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
+   </property>
+  </action>
+    <action name="ActionResize">
+   <property name="text">
+    <string>Resize</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="ActionClearHistory">
