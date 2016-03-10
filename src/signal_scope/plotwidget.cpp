@@ -259,7 +259,7 @@ void PlotWidget::updateSignalValueLabel()
     QString test = signalHandler->signalDescription()->mFieldName;
     test.replace("]","[");
     QString signalDescription = test.section("[",1,1);
-  
+
     // QString tlabel = signalItem->text().section(" ",1,0);
     signalItem->setText(signalDescription + QString(" ") + signalValue);
   }
@@ -331,7 +331,7 @@ void PlotWidget::onResetYAxisScale()
   {
     area = QRectF(-1, -1, 2, 2);
   }
-
+  
   this->setYAxisScale(area.top(), area.bottom());
 }
 
