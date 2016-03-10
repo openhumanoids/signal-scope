@@ -76,7 +76,8 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   mInternal->ActionOpenPython->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogOpenButton));
   mInternal->ActionSave->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogSaveButton));
   mInternal->ActionPause->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
-  mInternal->ActionResize->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
+  mInternal->ActionResize->setIcon(qApp->style()->standardIcon(QStyle::SP_ArrowUp));
+  mInternal->ActionAutomaticResize->setIcon(qApp->style()->standardIcon(QStyle::SP_BrowserReload));
   mInternal->ActionClearHistory->setIcon(qApp->style()->standardIcon(QStyle::SP_TrashIcon));
   mInternal->ActionAddPlot->setIcon(qApp->style()->standardIcon(QStyle::SP_TrashIcon));
   //QStyle::SP_DialogDiscardButton
@@ -87,6 +88,7 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   this->connect(mInternal->ActionSave, SIGNAL(triggered()), SLOT(onSaveSettings()));
   this->connect(mInternal->ActionPause, SIGNAL(triggered()), SLOT(onTogglePause()));
   this->connect(mInternal->ActionResize, SIGNAL(triggered()), SLOT(onResize()));
+  this->connect(mInternal->ActionAutomaticResize, SIGNAL(triggered()), SLOT(onAutomaticResize()));
   this->connect(mInternal->ActionAddPlot, SIGNAL(triggered()), SLOT(onNewPlotClicked()));
   this->connect(mInternal->ActionClearHistory, SIGNAL(triggered()), SLOT(onClearHistory()));
   this->connect(mInternal->ActionResetTimeZero, SIGNAL(triggered()), SLOT(onResetTimeZero()));
@@ -310,6 +312,25 @@ void MainWindow::onResize()
   foreach (PlotWidget* plot, mPlots)
   {
     plot->onResetYAxisScale();
+  }
+}
+
+void MainWindow::onAutomaticResize()
+{
+  if (mInternal->ActionAutomaticResize->isChecked()){
+    foreach (PlotWidget* plot, mPlots)
+    {
+      plot->onResetYAxisScale();
+      plot->getScale();
+      plot->rescalingTimer->start(100);
+    }    
+  }
+  else
+  {
+    foreach (PlotWidget* plot, mPlots)
+    {
+      plot->rescalingTimer->stop();
+    }
   }
 }
 

@@ -7,6 +7,7 @@
 #include "signaldescription.h"
 #include "pythonchannelsubscribercollection.h"
 
+#include <float.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QDoubleSpinBox>
@@ -104,8 +105,13 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   QTimer* labelUpdateTimer = new QTimer(this);
   this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
-  this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalValueLabel()));
+  this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
   labelUpdateTimer->start(100);
+
+  rescalingTimer = new QTimer(this);
+  this->connect(rescalingTimer, SIGNAL(timeout()), SLOT(resetYAxisMaxScale()));
+  yRange[0] = FLT_MAX;
+  yRange[1] = FLT_MIN;
 }
 
 void PlotWidget::onShowContextMenu(const QPoint& pos)
@@ -242,6 +248,47 @@ double PlotWidget::timeWindow() const
   return this->d_plot->timeWindow();
 }
 
+bool PlotWidget::getScale()
+{
+  float tmpRange[2];
+  bool update = false;
+
+  for (int ii=0; ii<mSignalListWidget->count(); ii++){
+    QListWidgetItem* signalItem = mSignalListWidget->item(ii);
+    SignalHandler* signalHandler = signalItem->data(Qt::UserRole).value<SignalHandler*>();
+    SignalData* signalData = signalHandler->signalData();
+
+    size_t nn = signalData->size();
+    if (nn){
+      tmpRange[0] = signalData->value(0).y();
+      tmpRange[1] = signalData->value(0).y();
+
+      for (size_t jj=1; jj<signalData->size(); jj++){
+        if (signalData->value(jj).y() > tmpRange[1])
+          tmpRange[1] = signalData->value(jj).y();
+        else if (signalData->value(jj).y() < tmpRange[0])
+          tmpRange[0] = signalData->value(jj).y();
+      }      
+    }
+
+    if (tmpRange[0] < yRange[0]){
+      yRange[0] = tmpRange[0];
+      update = true;
+    }
+    if (tmpRange[1] > yRange[1]){
+      yRange[1] = tmpRange[1];
+      update = true;
+    }      
+  }
+  return update;
+}
+
+void PlotWidget::resetYAxisMaxScale()
+{
+  if (getScale())
+    onResetYAxisScale();
+}
+
 void PlotWidget::updateSignalValueLabel()
 {
   for (int ii=0; ii<mSignalListWidget->count(); ii++){
@@ -331,7 +378,7 @@ void PlotWidget::onResetYAxisScale()
   {
     area = QRectF(-1, -1, 2, 2);
   }
-  
+
   this->setYAxisScale(area.top(), area.bottom());
 }
 
