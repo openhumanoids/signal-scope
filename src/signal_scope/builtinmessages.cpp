@@ -12,8 +12,6 @@
 
 #include "lcmtypes/drc/foot_contact_estimate_t.hpp"
 #include "lcmtypes/drc/controller_debug_t.hpp"
-// Do be depreciated
-#include "lcmtypes/drc/atlas_command_t.hpp"
 
 namespace
 {
@@ -326,20 +324,20 @@ define_array_handler(ControllerDebugU, drc::controller_debug_t, u, createIndexLi
 define_array_handler(ControllerDebugAlpha, drc::controller_debug_t, alpha, createIndexList(90));
 define_array_handler(ControllerDebugZMPerr, drc::controller_debug_t, zmp_err, createIndexList(2));
 
-define_array_handler(AtlasControlJointsPositionHandler, drc::atlas_command_t, position, JointNames::jointNames());
-define_array_handler(AtlasControlJointsVelocityHandler, drc::atlas_command_t, velocity, JointNames::jointNames());
-define_array_handler(AtlasControlJointsEffortHandler, drc::atlas_command_t, effort, JointNames::jointNames());
+define_array_handler(AtlasControlJointsPositionHandler, bot_core::atlas_command_t, position, JointNames::jointNames());
+define_array_handler(AtlasControlJointsVelocityHandler, bot_core::atlas_command_t, velocity, JointNames::jointNames());
+define_array_handler(AtlasControlJointsEffortHandler, bot_core::atlas_command_t, effort, JointNames::jointNames());
 
-define_array_handler(AtlasControlJointsKQPHandler, drc::atlas_command_t, k_q_p, JointNames::jointNames());
-define_array_handler(AtlasControlJointsKQIHandler, drc::atlas_command_t, k_q_i, JointNames::jointNames());
-define_array_handler(AtlasControlJointsKQDPHandler, drc::atlas_command_t, k_qd_p, JointNames::jointNames());
-define_array_handler(AtlasControlJointsKFPHandler, drc::atlas_command_t, k_f_p, JointNames::jointNames());
-define_array_handler(AtlasControlJointsFFQDHandler, drc::atlas_command_t, ff_qd, JointNames::jointNames());
-define_array_handler(AtlasControlJointsFFQDDPHandler, drc::atlas_command_t, ff_qd_d, JointNames::jointNames());
-define_array_handler(AtlasControlJointsFFFDHandler, drc::atlas_command_t, ff_f_d, JointNames::jointNames());
-define_array_handler(AtlasControlJointsFFConstHandler, drc::atlas_command_t, ff_const, JointNames::jointNames());
-define_array_handler(AtlasControlJointsKEffortHandler, drc::atlas_command_t, k_effort, JointNames::jointNames());
-define_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, drc::atlas_command_t, desired_controller_period_ms);
+define_array_handler(AtlasControlJointsKQPHandler, bot_core::atlas_command_t, k_q_p, JointNames::jointNames());
+define_array_handler(AtlasControlJointsKQIHandler, bot_core::atlas_command_t, k_q_i, JointNames::jointNames());
+define_array_handler(AtlasControlJointsKQDPHandler, bot_core::atlas_command_t, k_qd_p, JointNames::jointNames());
+define_array_handler(AtlasControlJointsKFPHandler, bot_core::atlas_command_t, k_f_p, JointNames::jointNames());
+define_array_handler(AtlasControlJointsFFQDHandler, bot_core::atlas_command_t, ff_qd, JointNames::jointNames());
+define_array_handler(AtlasControlJointsFFQDDPHandler, bot_core::atlas_command_t, ff_qd_d, JointNames::jointNames());
+define_array_handler(AtlasControlJointsFFFDHandler, bot_core::atlas_command_t, ff_f_d, JointNames::jointNames());
+define_array_handler(AtlasControlJointsFFConstHandler, bot_core::atlas_command_t, ff_const, JointNames::jointNames());
+define_array_handler(AtlasControlJointsKEffortHandler, bot_core::atlas_command_t, k_effort, JointNames::jointNames());
+define_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, bot_core::atlas_command_t, desired_controller_period_ms);
 
 // foot_contact_estimate_t
 define_field_handler(FootContactLeft, drc::foot_contact_estimate_t, left_contact);
