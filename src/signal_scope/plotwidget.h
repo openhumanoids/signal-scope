@@ -61,7 +61,6 @@ public slots:
 
   void onSignalListItemChanged(QListWidgetItem* item);
   void updateSignalInfoLabel();
-  void updateSignalValueLabel();
   void onResetYAxisScale();
   void resetYAxisMaxScale();
   bool getScale();
