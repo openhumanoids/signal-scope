@@ -105,7 +105,7 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   QTimer* labelUpdateTimer = new QTimer(this);
   this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
-  this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
+  this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalValueLabel()));
   labelUpdateTimer->start(100);
 
   rescalingTimer = new QTimer(this);
