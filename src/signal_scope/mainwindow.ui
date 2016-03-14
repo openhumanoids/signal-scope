@@ -27,10 +27,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="ActionOpen"/>
+    <!-- <addaction name="ActionOpen"/> -->
     <addaction name="ActionOpenPython"/>
-    <addaction name="separator"/>
-    <addaction name="ActionSave"/>
+    <!-- <addaction name="separator"/> -->
+    <!-- <addaction name="ActionSave"/> -->
     <addaction name="separator"/>
     <addaction name="ActionQuit"/>
    </widget>
@@ -67,8 +67,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="ActionOpen"/>
-   <addaction name="ActionSave"/>
+   <addaction name="ActionOpenPython"/>
+   <!-- <addaction name="ActionSave"/> -->
    <addaction name="separator"/>
    <addaction name="ActionClearHistory"/>
    <addaction name="separator"/>
@@ -79,9 +79,6 @@
   <action name="ActionOpen">
    <property name="text">
     <string>Open config...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="ActionSave">
@@ -159,6 +156,9 @@
   <action name="ActionOpenPython">
    <property name="text">
     <string>Open Python script...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="ActionResetTimeZero">
