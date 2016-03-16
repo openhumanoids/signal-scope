@@ -321,7 +321,6 @@ void MainWindow::onAutomaticResize()
     foreach (PlotWidget* plot, mPlots)
     {
       plot->onResetYAxisScale();
-      plot->getScale();
       plot->rescalingTimer->start(100);
     }    
   }

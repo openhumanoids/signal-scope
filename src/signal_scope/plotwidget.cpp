@@ -248,45 +248,28 @@ double PlotWidget::timeWindow() const
   return this->d_plot->timeWindow();
 }
 
-bool PlotWidget::getScale()
+void PlotWidget::resetYAxisMaxScale()
 {
-  float tmpRange[2];
   bool update = false;
-
+  QRectF tmpRange;
   for (int ii=0; ii<mSignalListWidget->count(); ii++){
     QListWidgetItem* signalItem = mSignalListWidget->item(ii);
     SignalHandler* signalHandler = signalItem->data(Qt::UserRole).value<SignalHandler*>();
     SignalData* signalData = signalHandler->signalData();
-
-    size_t nn = signalData->size();
-    if (nn){
-      tmpRange[0] = signalData->value(0).y();
-      tmpRange[1] = signalData->value(0).y();
-
-      for (size_t jj=1; jj<signalData->size(); jj++){
-        if (signalData->value(jj).y() > tmpRange[1])
-          tmpRange[1] = signalData->value(jj).y();
-        else if (signalData->value(jj).y() < tmpRange[0])
-          tmpRange[0] = signalData->value(jj).y();
-      }      
-    }
-
-    if (tmpRange[0] < yRange[0]){
-      yRange[0] = tmpRange[0];
+    tmpRange = signalData->computeBounds();
+    if (tmpRange.topLeft().y() < yRange[0]){
+      yRange[0] = tmpRange.topLeft().y();
       update = true;
     }
-    if (tmpRange[1] > yRange[1]){
-      yRange[1] = tmpRange[1];
+    if (tmpRange.bottomLeft().y() > yRange[1]){
+      yRange[1] = tmpRange.bottomLeft().y();
       update = true;
     }      
   }
-  return update;
-}
-
-void PlotWidget::resetYAxisMaxScale()
-{
-  if (getScale())
+  
+  if (update){
     onResetYAxisScale();
+  }
 }
 
 void PlotWidget::updateSignalValueLabel()
@@ -362,6 +345,17 @@ void PlotWidget::onResetYAxisScale()
     if (this->signalIsVisible(signalHandler))
     {
       QRectF signalBounds = signalHandler->signalData()->computeBounds();
+      if (signalBounds.top() == signalBounds.bottom()){  // in case of a constant signal
+        if (signalBounds.bottom() >= 0.0)
+          signalBounds.setBottom(signalBounds.bottom()*1.1);
+        else
+          signalBounds.setBottom(signalBounds.bottom()*0.9);
+
+        if (signalBounds.top() >= 0.0)
+          signalBounds.setTop(signalBounds.top()*0.9);
+        else
+          signalBounds.setTop(signalBounds.top()*1.1);
+      }
 
       if (!area.isValid())
       {
@@ -377,6 +371,15 @@ void PlotWidget::onResetYAxisScale()
   if (!area.isValid())
   {
     area = QRectF(-1, -1, 2, 2);
+  }
+  else
+  {
+      double marginMax = 1.1;
+      double marginMin = 1.1;
+      if (area.y()+area.height() < 0.0) marginMax = 0.9;
+      if (area.y() > 0.0) marginMin = 0.9;
+      area.setY(area.y()*marginMin);
+      area.setHeight(area.height()*marginMax);
   }
 
   this->setYAxisScale(area.top(), area.bottom());

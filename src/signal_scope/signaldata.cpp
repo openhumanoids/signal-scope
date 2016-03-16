@@ -184,14 +184,7 @@ QRectF SignalData::computeBounds()
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
-
-  double marginMax = 1.1;
-  double marginMin = 1.1;
-  if (maxY < 0.0) marginMax = 0.9;
-  if (minY > 0.0) marginMin = 0.9;
-  maxY *= marginMax;
-  minY *= marginMin;
-
+  
   return QRectF(minX, minY, maxX-minX, maxY-minY);
 }
 

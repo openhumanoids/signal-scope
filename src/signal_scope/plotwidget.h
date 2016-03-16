@@ -64,7 +64,6 @@ public slots:
   void updateSignalValueLabel();
   void onResetYAxisScale();
   void resetYAxisMaxScale();
-  bool getScale();
   void setYAxisScale(double lower, double upper);
 
   void setTimeWindow(double timeWindow);
