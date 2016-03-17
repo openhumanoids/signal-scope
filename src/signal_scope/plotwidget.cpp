@@ -273,7 +273,7 @@ void PlotWidget::resetYAxisMaxScale()
 
 void PlotWidget::updateSignalInfoLabel()
 {
-  mSignalInfoLabel->setText(QString())
+  mSignalInfoLabel->setText(QString());
 
   QListWidgetItem* selectedItem = mSignalListWidget->currentItem();
   if (!selectedItem)
