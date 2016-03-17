@@ -105,7 +105,6 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   QTimer* labelUpdateTimer = new QTimer(this);
   this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
-  this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalValueLabel()));
   labelUpdateTimer->start(100);
 
   rescalingTimer = new QTimer(this);
@@ -272,32 +271,9 @@ void PlotWidget::resetYAxisMaxScale()
   }
 }
 
-void PlotWidget::updateSignalValueLabel()
-{
-  for (int ii=0; ii<mSignalListWidget->count(); ii++){
-
-    QListWidgetItem* signalItem = mSignalListWidget->item(ii);
-    SignalHandler* signalHandler = signalItem->data(Qt::UserRole).value<SignalHandler*>();
-    SignalData* signalData = signalHandler->signalData();
-    QString signalValue = "No data";
-    int numberOfValues = signalData->size();
-    if (numberOfValues)
-    {
-      signalValue = QString::number(signalData->value(numberOfValues-1).y(), 'g', 6);
-    }
-
-    QString test = signalHandler->signalDescription()->mFieldName;
-    test.replace("]","[");
-    QString signalDescription = test.section("[",1,1);
-
-    // QString tlabel = signalItem->text().section(" ",1,0);
-    signalItem->setText(signalDescription + QString(" ") + signalValue);
-  }
-}
-
 void PlotWidget::updateSignalInfoLabel()
 {
-  mSignalInfoLabel->setText(QString());
+  mSignalInfoLabel->setText(QString())
 
   QListWidgetItem* selectedItem = mSignalListWidget->currentItem();
   if (!selectedItem)
@@ -534,12 +510,7 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
     signalHandler->signalDescription()->mColor = color;
   }
 
-  // QString signalDescription = QString("%2 [%1]").arg(signalHandler->channel()).arg(signalHandler->description().split(".").back());
-
-  QString test = signalHandler->signalDescription()->mFieldName;
-  test.replace("]","[");
-  QString signalDescription = test.section("[",1,1);
-
+  QString signalDescription = QString("%2 [%1]").arg(signalHandler->channel()).arg(signalHandler->description().split(".").back());
   QListWidgetItem* signalItem = new QListWidgetItem(signalDescription);
   signalItem->setToolTip(signalDescription);
   mSignalListWidget->addItem(signalItem);
