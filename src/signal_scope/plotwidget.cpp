@@ -7,7 +7,8 @@
 #include "signaldescription.h"
 #include "pythonchannelsubscribercollection.h"
 
-#include <float.h>
+#include <limits>
+#include <cmath>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QDoubleSpinBox>
@@ -109,8 +110,8 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   rescalingTimer = new QTimer(this);
   this->connect(rescalingTimer, SIGNAL(timeout()), SLOT(resetYAxisMaxScale()));
-  yRange[0] = FLT_MAX;
-  yRange[1] = FLT_MIN;
+  yRange[0] = std::numeric_limits<double>::max();
+  yRange[1] = -std::numeric_limits<double>::max();
 }
 
 void PlotWidget::onShowContextMenu(const QPoint& pos)
@@ -321,16 +322,10 @@ void PlotWidget::onResetYAxisScale()
     if (this->signalIsVisible(signalHandler))
     {
       QRectF signalBounds = signalHandler->signalData()->computeBounds();
-      if (signalBounds.top() == signalBounds.bottom()){  // in case of a constant signal
-        if (signalBounds.bottom() >= 0.0)
-          signalBounds.setBottom(signalBounds.bottom()*1.1);
-        else
-          signalBounds.setBottom(signalBounds.bottom()*0.9);
-
-        if (signalBounds.top() >= 0.0)
-          signalBounds.setTop(signalBounds.top()*0.9);
-        else
-          signalBounds.setTop(signalBounds.top()*1.1);
+      if (!signalBounds.isValid()){
+        double margin = std::abs(signalBounds.top()*0.1);
+        signalBounds.setTop(signalBounds.top() - margin);
+        signalBounds.setBottom(signalBounds.bottom() + margin);
       }
 
       if (!area.isValid())
@@ -350,12 +345,9 @@ void PlotWidget::onResetYAxisScale()
   }
   else
   {
-      double marginMax = 1.1;
-      double marginMin = 1.1;
-      if (area.y()+area.height() < 0.0) marginMax = 0.9;
-      if (area.y() > 0.0) marginMin = 0.9;
-      area.setY(area.y()*marginMin);
-      area.setHeight(area.height()*marginMax);
+    double margin = std::abs(area.top()*0.1);
+    area.setTop(area.top() - margin);
+    area.setBottom(area.bottom() + margin);
   }
 
   this->setYAxisScale(area.top(), area.bottom());
