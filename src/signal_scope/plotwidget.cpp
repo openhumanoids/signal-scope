@@ -110,8 +110,8 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
 
   rescalingTimer = new QTimer(this);
   this->connect(rescalingTimer, SIGNAL(timeout()), SLOT(resetYAxisMaxScale()));
-  yRange[0] = std::numeric_limits<double>::max();
-  yRange[1] = -std::numeric_limits<double>::max();
+  this->yRange[0] = std::numeric_limits<double>::max();
+  this->yRange[1] = -std::numeric_limits<double>::max();
 }
 
 void PlotWidget::onShowContextMenu(const QPoint& pos)
@@ -255,6 +255,7 @@ void PlotWidget::resetYAxisMaxScale()
   for (int ii=0; ii<mSignalListWidget->count(); ii++){
     QListWidgetItem* signalItem = mSignalListWidget->item(ii);
     SignalHandler* signalHandler = signalItem->data(Qt::UserRole).value<SignalHandler*>();
+    if (!this->signalIsVisible(signalHandler)) continue;
     SignalData* signalData = signalHandler->signalData();
     tmpRange = signalData->computeBounds();
     if (tmpRange.topLeft().y() < yRange[0]){
@@ -345,7 +346,7 @@ void PlotWidget::onResetYAxisScale()
   }
   else
   {
-    double margin = std::abs(area.top()*0.1);
+    double margin = std::abs(area.height()*0.1);
     area.setTop(area.top() - margin);
     area.setBottom(area.bottom() + margin);
   }
@@ -424,7 +425,8 @@ void PlotWidget::clearHistory()
   {
     handler->signalData()->clear();
   }
-
+  this->yRange[0] = std::numeric_limits<double>::max();
+  this->yRange[1] = -std::numeric_limits<double>::max();
   d_plot->replot();
 }
 
