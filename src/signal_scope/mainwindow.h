@@ -43,6 +43,7 @@ public slots:
   void onResetTimeZero();
   void setPlotBackgroundColor(QString color);
   void onResize();
+  void onAutomaticResize();
   void onChooseBackgroundColor();
   void onChooseHistoryLength();
   void onChoosePointSize();

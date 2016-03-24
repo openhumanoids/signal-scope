@@ -74,6 +74,7 @@
    <addaction name="separator"/>
    <addaction name="ActionPause"/>
    <addaction name="ActionResize"/>
+   <addaction name="ActionAutomaticResize"/>
   </widget>
   <action name="ActionOpen">
    <property name="text">
@@ -121,7 +122,15 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-    <action name="ActionResize">
+  <action name="ActionAutomaticResize">
+   <property name="text">
+    <string>Automatic Resize</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+  </property>
+  </action>
+  <action name="ActionResize">
    <property name="text">
     <string>Resize</string>
    </property>

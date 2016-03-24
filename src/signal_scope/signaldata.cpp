@@ -3,7 +3,7 @@
 #include <qvector.h>
 #include <qmutex.h>
 #include <qreadwritelock.h>
-
+#include <QDebug>
 #include <limits>
 
 #include "fpscounter.h"
@@ -184,7 +184,7 @@ QRectF SignalData::computeBounds()
     if (y < minY) minY = y;
     if (y > maxY) maxY = y;
   }
-
+  
   return QRectF(minX, minY, maxX-minX, maxY-minY);
 }
 

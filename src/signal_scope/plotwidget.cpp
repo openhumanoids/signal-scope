@@ -7,6 +7,8 @@
 #include "signaldescription.h"
 #include "pythonchannelsubscribercollection.h"
 
+#include <limits>
+#include <cmath>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <QDoubleSpinBox>
@@ -19,6 +21,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QDebug>
 
 PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *parent):
     QWidget(parent),
@@ -104,6 +107,11 @@ PlotWidget::PlotWidget(PythonChannelSubscriberCollection* subscribers, QWidget *
   QTimer* labelUpdateTimer = new QTimer(this);
   this->connect(labelUpdateTimer, SIGNAL(timeout()), SLOT(updateSignalInfoLabel()));
   labelUpdateTimer->start(100);
+
+  rescalingTimer = new QTimer(this);
+  this->connect(rescalingTimer, SIGNAL(timeout()), SLOT(resetYAxisMaxScale()));
+  this->yRange[0] = std::numeric_limits<double>::max();
+  this->yRange[1] = -std::numeric_limits<double>::max();
 }
 
 void PlotWidget::onShowContextMenu(const QPoint& pos)
@@ -240,6 +248,31 @@ double PlotWidget::timeWindow() const
   return this->d_plot->timeWindow();
 }
 
+void PlotWidget::resetYAxisMaxScale()
+{
+  bool update = false;
+  QRectF tmpRange;
+  for (int ii=0; ii<mSignalListWidget->count(); ii++){
+    QListWidgetItem* signalItem = mSignalListWidget->item(ii);
+    SignalHandler* signalHandler = signalItem->data(Qt::UserRole).value<SignalHandler*>();
+    if (!this->signalIsVisible(signalHandler)) continue;
+    SignalData* signalData = signalHandler->signalData();
+    tmpRange = signalData->computeBounds();
+    if (tmpRange.topLeft().y() < yRange[0]){
+      yRange[0] = tmpRange.topLeft().y();
+      update = true;
+    }
+    if (tmpRange.bottomLeft().y() > yRange[1]){
+      yRange[1] = tmpRange.bottomLeft().y();
+      update = true;
+    }      
+  }
+  
+  if (update){
+    onResetYAxisScale();
+  }
+}
+
 void PlotWidget::updateSignalInfoLabel()
 {
   mSignalInfoLabel->setText(QString());
@@ -264,6 +297,7 @@ void PlotWidget::updateSignalInfoLabel()
   QString signalInfoText = QString("Freq:  %1  Val: %2").arg(QString::number(signalData->messageFrequency(), 'f', 1)).arg(signalValue);
 
   mSignalInfoLabel->setText(signalInfoText);
+
 }
 
 void PlotWidget::setEndTime(double endTime)
@@ -289,6 +323,11 @@ void PlotWidget::onResetYAxisScale()
     if (this->signalIsVisible(signalHandler))
     {
       QRectF signalBounds = signalHandler->signalData()->computeBounds();
+      if (!signalBounds.isValid()){
+        double margin = std::abs(signalBounds.top()*0.1);
+        signalBounds.setTop(signalBounds.top() - margin);
+        signalBounds.setBottom(signalBounds.bottom() + margin);
+      }
 
       if (!area.isValid())
       {
@@ -304,6 +343,12 @@ void PlotWidget::onResetYAxisScale()
   if (!area.isValid())
   {
     area = QRectF(-1, -1, 2, 2);
+  }
+  else
+  {
+    double margin = std::abs(area.height()*0.1);
+    area.setTop(area.top() - margin);
+    area.setBottom(area.bottom() + margin);
   }
 
   this->setYAxisScale(area.top(), area.bottom());
@@ -380,7 +425,8 @@ void PlotWidget::clearHistory()
   {
     handler->signalData()->clear();
   }
-
+  this->yRange[0] = std::numeric_limits<double>::max();
+  this->yRange[1] = -std::numeric_limits<double>::max();
   d_plot->replot();
 }
 
