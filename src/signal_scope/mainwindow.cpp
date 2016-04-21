@@ -264,6 +264,14 @@ PythonSignalHandler* MainWindow::addPythonSignal(PlotWidget* plot, QVariant sign
   return signalHandler;
 }
 
+void MainWindow::onTimeWindowChange(double timeWindow)
+{
+  foreach (PlotWidget* plot, mPlots)
+  {
+    plot->setTimeWindow(timeWindow);
+  }
+}
+
 void MainWindow::loadPythonScript(const QString& filename)
 {
   if (QFileInfo(filename).exists())

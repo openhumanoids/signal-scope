@@ -147,12 +147,23 @@ def decodeMessageFunction(messageBytes):
 msg = LookupHelper()
 tNow = LocalTimeHelper()
 
-def addPlot(timeWindow=None, yLimits=None):
+def formatOptions(pointSize=None, timeWindow=None, curveStyle=None):
+    window = _mainWindow;
+    if pointSize is not None:
+      window.onPointSizeChanged(pointSize)
+    if timeWindow is not None:
+      window.onTimeWindowChange(timeWindow)
+    if curveStyle is not None:
+      if curveStyle in ["dots","lines"]:
+        window.onCurveStyleChanged(curveStyle);
+
+def addPlot(pointSize=None, timeWindow=None, yLimits=None):
     plot = _mainWindow.addPlot()
     if timeWindow is not None:
         plot.setTimeWindow(timeWindow)
     if yLimits is not None:
         plot.setYAxisScale(yLimits[0], yLimits[1])
+
     return plot
 
 
