@@ -49,7 +49,7 @@ public slots:
   void onChoosePointSize();
   void onPointSizeChanged(int size);
   void onCurveStyleChanged(QString style);
-  void onTimeWindowChange(double timeWindow);
+  void onTimeWindowChanged(double timeWindow);
 
   PlotWidget* addPlot();
   void loadPythonScript(const QString& filename);

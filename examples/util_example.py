@@ -31,6 +31,6 @@ def makePlots(joints):
         addSignal('EST_ROBOT_STATE', msg.utime, msg.joint_velocity[jn[joint]])
         addSignal('ATLAS_COMMAND', msg.utime, msg.velocity[jns[joint]])
 
-# you can select the point size, time window and curvstyle for all plots with the function formatOptions
+# you can select the point size, time window and curve style for all plots with the function formatOptions
 # note that you should call it after you have added all your plots
-formatOptions(pointSize=4,timeWindow=30.0,curveStyle="lines")
+setFormatOptions(pointSize=4,timeWindow=30.0,curveStyle="lines")
