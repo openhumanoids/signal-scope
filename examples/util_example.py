@@ -12,21 +12,25 @@ def makePlots(joints):
     jns = msg.joint_names
 
     # position plot
-    addPlot(timeWindow=30, yLimits=[-2.5, 2.5])
+    addPlot(yLimits=[-2.5, 2.5])
     for joint in joints:
         addSignal('EST_ROBOT_STATE', msg.utime, msg.joint_position[jn[joint]])
         addSignal('ATLAS_COMMAND', msg.utime, msg.position[jns[joint]])
 
 
     # effort plot
-    addPlot(timeWindow=30, yLimits=[-100, 100])
+    addPlot(yLimits=[-100, 100])
     for joint in joints:
         addSignal('EST_ROBOT_STATE', msg.utime, msg.joint_effort[jn[joint]])
         addSignal('ATLAS_COMMAND', msg.utime, msg.effort[jns[joint]])
 
 
     # velocity plot
-    addPlot(timeWindow=30, yLimits=[-2, 2])
+    addPlot(yLimits=[-2, 2])
     for joint in joints:
         addSignal('EST_ROBOT_STATE', msg.utime, msg.joint_velocity[jn[joint]])
         addSignal('ATLAS_COMMAND', msg.utime, msg.velocity[jns[joint]])
+
+# you can select the point size, time window and curve style for all plots with the function formatOptions
+# note that you should call it after you have added all your plots
+setFormatOptions(pointSize=4,timeWindow=30.0,curveStyle="lines")

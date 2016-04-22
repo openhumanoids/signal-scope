@@ -47,6 +47,9 @@ public slots:
   void onChooseBackgroundColor();
   void onChooseHistoryLength();
   void onChoosePointSize();
+  void onPointSizeChanged(int size);
+  void onCurveStyleChanged(QString style);
+  void onTimeWindowChanged(double timeWindow);
 
   PlotWidget* addPlot();
   void loadPythonScript(const QString& filename);
@@ -59,9 +62,7 @@ protected slots:
   void onSyncXAxis(double x0, double x1);
 
   void onRedrawPlots();
-
-  void onPointSizeChanged(int size);
-  void onCurveStyleChanged(QString style);
+  
   void onAlignModeChanged(QString mode);
 
 protected:
