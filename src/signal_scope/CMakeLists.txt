@@ -106,6 +106,11 @@ if (USE_BUILTIN_LCMTYPES)
   list(APPEND srcs builtinmessages.cpp)
 endif()
 
+add_executable(signal-scope ${srcs})
+
+if (USE_BUILTIN_LCMTYPES)
+  pods_use_pkg_config_packages(signal-scope lcmtypes_bot2-core)
+endif()
 
 list(APPEND deps
   ${QT_LIBRARIES}
@@ -114,8 +119,6 @@ list(APPEND deps
   ${LCM_LIBRARIES}
   )
 
-
-add_executable(signal-scope ${srcs})
 target_link_libraries(signal-scope ${deps})
 
 

@@ -6,7 +6,14 @@
 
 
 
-#include <lcmtypes/bot_core.hpp>
+#include <lcmtypes/bot_core/robot_state_t.hpp>
+#include <lcmtypes/bot_core/pose_t.hpp>
+#include <lcmtypes/bot_core/ins_t.hpp>
+#include <lcmtypes/bot_core/atlas_command_t.hpp>
+#include <lcmtypes/bot_core/kvh_raw_imu_t.hpp>
+#include <lcmtypes/bot_core/kvh_raw_imu_batch_t.hpp>
+#include <lcmtypes/bot_core/six_axis_force_torque_t.hpp>
+
 #include <lcmtypes/vicon.hpp>
 #include "lcmtypes/pronto/filter_state_t.hpp"
 
