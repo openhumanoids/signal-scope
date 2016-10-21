@@ -219,7 +219,7 @@ def addSignalFunctions(channel, signalFunction, keys, keyLookup=None, plot=None,
 
     for key, color, label in zip(keys, colors, labels):
 
-        keyStr = key        
+        keyStr = str(key)        
         if keyLookup is not None:
             key = keyLookup[key]
 
