@@ -203,18 +203,44 @@ def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True,
     _mainWindow.addPythonSignal(plot, [channel, _signalFunction, label or signalFunction.__doc__, color])
 
 
+def addSignalFunctions(channel, signalFunction, keys, keyLookup=None, plot=None, colors=None, labels=None):
+    
+    def func(key, keyStr):
+        f = lambda msg: signalFunction(msg)[0], signalFunction(msg)[1][key]
+        if signalFunction.__doc__:
+            f.__doc__ = signalFunction.__doc__ + " " + keyStr
+
+    if colors is None:
+        colors = [None] * len(keys)
+
+    if labels is None:
+        labels = [None] * len(keys)
+
+    for key, color, label in zip(keys, colors, labels):
+
+        keyStr = key        
+        if keyLookup is not None:
+            key = keyLookup[key]
+
+        addSignalFunction(channel, func(key,keyStr), plot=plot, color=colors, label=labels)
+
+
+
 def addSignal(channel, timeLookup, valueLookup, plot=None, color=None, label=None):
 
     signalFunction = createSignalFunction(timeLookup, valueLookup)
     addSignalFunction(channel, signalFunction, plot=plot, color=color, wrap=False, label=label)
 
 
-def addSignals(channel, timeLookup, valueLookup, keys, keyLookup=None, plot=None, colors=None):
+def addSignals(channel, timeLookup, valueLookup, keys, keyLookup=None, plot=None, colors=None, labels=None):
 
     if colors is None:
         colors = [None] * len(keys)
 
-    for key, color in zip(keys, colors):
+    if labels is None:
+        labels = [None] * len(keys)
+
+    for key, color, label in zip(keys, colors, labels):
 
         if keyLookup is not None:
             key = keyLookup[key]
