@@ -11,4 +11,4 @@ def myFunction(msg):
     return msg.utime, [v*2.23694 for v in msg.vel]
 
 
-addSignalFunction('POSE_BODY', myFunction, [0, 1, 2])
+addSignalFunctions('POSE_BODY', myFunction, [0, 1, 2])

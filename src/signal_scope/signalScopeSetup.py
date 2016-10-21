@@ -206,7 +206,7 @@ def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True,
 def addSignalFunctions(channel, signalFunction, keys, keyLookup=None, plot=None, colors=None, labels=None):
     
     def func(key, keyStr):
-        f = lambda msg: signalFunction(msg)[0], signalFunction(msg)[1][key]
+        f = lambda msg: (signalFunction(msg)[0], signalFunction(msg)[1][key])
         if signalFunction.__doc__:
             f.__doc__ = signalFunction.__doc__ + " " + keyStr
 
