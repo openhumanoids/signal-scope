@@ -223,7 +223,7 @@ def addSignalFunctions(channel, signalFunction, keys, keyLookup=None, plot=None,
         if keyLookup is not None:
             key = keyLookup[key]
 
-        addSignalFunction(channel, func(key,keyStr), plot=plot, color=colors, label=labels)
+        addSignalFunction(channel, func(key,keyStr), plot=plot, color=color, label=label)
 
 
 
