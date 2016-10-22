@@ -206,7 +206,9 @@ def addSignalFunction(channel, signalFunction, plot=None, color=None, wrap=True,
 def addSignalFunctions(channel, signalFunction, keys, keyLookup=None, plot=None, colors=None, labels=None):
     
     def func(key, keyStr):
-        f = lambda msg: (signalFunction(msg)[0], signalFunction(msg)[1][key])
+        def f (msg):
+            t, x = signalFunction(msg)
+            return t, x[key]
         if signalFunction.__doc__:
             f.__doc__ = signalFunction.__doc__ + " " + keyStr
         return f
@@ -246,4 +248,4 @@ def addSignals(channel, timeLookup, valueLookup, keys, keyLookup=None, plot=None
         if keyLookup is not None:
             key = keyLookup[key]
 
-        addSignal(channel, timeLookup, valueLookup[key], plot=plot, color=color)
+        addSignal(channel, timeLookup, valueLookup[key], plot=plot, color=color, label=label)
