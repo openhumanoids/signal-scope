@@ -1,9 +1,7 @@
 find_package(Qt4 REQUIRED QtCore QtGui QtScript)
 include(${QT_USE_FILE})
 
-find_package(LCM REQUIRED)
-
-
+find_package(lcm REQUIRED)
 
 set(deps)
 
@@ -116,7 +114,7 @@ list(APPEND deps
   ${QT_LIBRARIES}
   ${QWT_LIBRARY}
   ${python_deps}
-  ${LCM_LIBRARIES}
+  lcm
   )
 
 target_link_libraries(signal-scope ${deps})
