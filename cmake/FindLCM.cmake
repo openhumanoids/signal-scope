@@ -7,6 +7,11 @@
 # <package>_INCLUDE_DIRS
 # <package>_LIBRARIES
 
+find_package(lcm QUIET CONFIG)
+if(lcm_FOUND)
+  set(LCM_LIBRARIES lcm::lcm)
+  return()
+endif()
 
 macro(pkg_config_find_module varname pkgname header library pathsuffix)
 
