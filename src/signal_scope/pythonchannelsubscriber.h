@@ -32,7 +32,11 @@ public:
       printf("error: subscribe() called without first calling unsubscribe.\n");
       return;
     }
+#if QT_VERSION >= 0x050000
+    mSubscription = lcmHandle->subscribe(this->channel().toLatin1().data(), &PythonChannelSubscriber::handleMessageOnChannel, this);
+#else
     mSubscription = lcmHandle->subscribe(this->channel().toAscii().data(), &PythonChannelSubscriber::handleMessageOnChannel, this);
+#endif
   }
 
 

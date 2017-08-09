@@ -7,6 +7,8 @@ case $1 in
     port install qt4-mac qwt ;;
   ("ubuntu")
     apt-get install python-dev libqt4-dev libqwt-dev ;;
+  ("ubuntu-xenial")
+    apt-get install python-dev qtscript5-dev libqwt-qt5-dev ;;
   ("cygwin")
     echo "WARNING: install_prereqs cygwin not implemented for this module" ;;
   (*)
@@ -15,6 +17,7 @@ case $1 in
     echo "  homebrew"
     echo "  macports"
     echo "  ubuntu"
+    echo "  ubuntu-xenial"
     echo "  cygwin"
     exit 1 ;;
 esac

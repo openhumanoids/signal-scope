@@ -1,9 +1,23 @@
-find_package(Qt4 REQUIRED QtCore QtGui QtScript)
-include(${QT_USE_FILE})
-
+if("${USED_QTVERSION}" STREQUAL "5")
+  find_package(Qt5 REQUIRED Core Gui Script Widgets)
+  set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Script Qt5::Widgets)
+  # Compatibility macros
+  macro(qt4_wrap_cpp)
+    qt5_wrap_cpp(${ARGN})
+  endmacro()
+  macro(qt4_wrap_ui)
+    qt5_wrap_ui(${ARGN})
+  endmacro()
+  macro(qt4_add_resources)
+    qt5_add_resources(${ARGN})
+  endmacro()
+  find_library(QWT_LIBRARY qwt-qt5)
+else()
+  find_library(QWT_LIBRARY qwt)
+  find_package(Qt4 REQUIRED QtCore QtGui QtScript)
+  include(${QT_USE_FILE})
+endif()
 find_package(LCM REQUIRED)
-
-
 
 set(deps)
 
@@ -21,8 +35,6 @@ endif()
 
 
 find_path(QWT_INCLUDE_DIR qwt/qwt.h HINTS /usr/local/lib)
-find_library(QWT_LIBRARY qwt)
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${QWT_INCLUDE_DIR})
 include_directories(${LCM_INCLUDE_DIRS})
@@ -59,7 +71,6 @@ if(USE_PYTHON)
     )
   set(python_srcs)
 endif()
-
 
 qt4_wrap_cpp(moc_srcs
   mainwindow.h
