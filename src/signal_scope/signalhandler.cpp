@@ -41,7 +41,11 @@ void SignalHandler::subscribe(lcm::LCM* lcmInstance)
     printf("error: SignalHandler::subscribe() called without first calling unsubscribe.\n");
     return;
   }
+#if QT_VERSION >= 0x050000
+  mSubscription = lcmInstance->subscribe(this->channel().toLatin1().data(), &SignalHandler::handleMessage, this);
+#else
   mSubscription = lcmInstance->subscribe(this->channel().toAscii().data(), &SignalHandler::handleMessage, this);
+#endif
 }
 
 SignalHandlerFactory& SignalHandlerFactory::instance()
