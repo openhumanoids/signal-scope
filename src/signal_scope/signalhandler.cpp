@@ -3,10 +3,9 @@
 #include "signaldata.h"
 #include "signaldescription.h"
 
-#include <lcm/lcm-cpp.hpp>
 
 
-SignalHandler::SignalHandler(const SignalDescription* signalDescription, QObject* parent) : LCMSubscriber(parent)
+SignalHandler::SignalHandler(const SignalDescription* signalDescription, QObject* parent) : QObject(parent)
 {
   mDescription = *signalDescription;
   mSignalData = new SignalData();
@@ -17,36 +16,11 @@ SignalHandler::~SignalHandler()
   delete mSignalData;
 }
 
-void SignalHandler::handleMessage(const lcm::ReceiveBuffer* rbuf, const std::string& channel)
+void SignalHandler::appendSample(double timeNow, double signalValue)
 {
-  double timeNow;
-  double signalValue;
-  (void)channel;
-
-  bool valid = this->extractSignalData(rbuf, timeNow, signalValue);
-  if (valid)
-  {
-    mSignalData->appendSample(timeNow, signalValue);
-  }
-  else
-  {
-    mSignalData->flagMessageError();
-  }
+  mSignalData->appendSample(timeNow, signalValue);
 }
 
-void SignalHandler::subscribe(lcm::LCM* lcmInstance)
-{
-  if (mSubscription)
-  {
-    printf("error: SignalHandler::subscribe() called without first calling unsubscribe.\n");
-    return;
-  }
-#if QT_VERSION >= 0x050000
-  mSubscription = lcmInstance->subscribe(this->channel().toLatin1().data(), &SignalHandler::handleMessage, this);
-#else
-  mSubscription = lcmInstance->subscribe(this->channel().toAscii().data(), &SignalHandler::handleMessage, this);
-#endif
-}
 
 SignalHandlerFactory& SignalHandlerFactory::instance()
 {

@@ -5,7 +5,7 @@
 #include "setscaledialog.h"
 #include "selectsignaldialog.h"
 #include "signaldescription.h"
-#include "pythonchannelsubscribercollection.h"
+//#include "pythonchannelsubscribercollection.h"
 
 #include <limits>
 #include <cmath>
@@ -230,7 +230,7 @@ void PlotWidget::onShowSignalContextMenu(const QPoint& pos)
     {
       SignalHandler* signalHandler = this->signalForItem(selectedItem);
 
-      mSubscribers->removeSignalHandler(signalHandler);
+      //mSubscribers->removeSignalHandler(signalHandler);
 
       d_plot->removeSignal(signalHandler->signalData());
       mSignals.remove(selectedItem);
@@ -510,7 +510,7 @@ void PlotWidget::addSignal(SignalHandler* signalHandler)
   mSignalListWidget->addItem(signalItem);
   mSignals[signalItem] = signalHandler;
 
-  mSubscribers->addSignalHandler(signalHandler);
+  //mSubscribers->addSignalHandler(signalHandler);
 
   d_plot->addSignal(signalHandler->signalData(), color);
 

@@ -21,7 +21,8 @@ else()
   find_package(Qt4 REQUIRED QtCore QtGui QtScript)
   include(${QT_USE_FILE})
 endif()
-find_package(LCM REQUIRED)
+
+#find_package(LCM REQUIRED)
 
 set(deps)
 
@@ -68,10 +69,10 @@ if(USE_PYTHON)
 
   set(python_deps ${PYTHON_LIBRARIES} ${CTK_PYTHONCONSOLE_LIBRARIES} ${PYTHONQT_LIBRARIES})
   set(python_moc_srcs
-    pythonsignalhandler.h
-    pythonchannelsubscribercollection.h
-    pythonchannelsubscriber.h
-    pythonmessageinspector.h
+    #pythonsignalhandler.h
+    #pythonchannelsubscribercollection.h
+    #pythonchannelsubscriber.h
+    #pythonmessageinspector.h
     )
   set(python_srcs)
 endif()
@@ -80,8 +81,8 @@ qt4_wrap_cpp(moc_srcs
   mainwindow.h
   plot.h
   plotwidget.h
-  lcmthread.h
-  lcmsubscriber.h
+  #lcmthread.h
+  #lcmsubscriber.h
   signalhandler.h
   setscaledialog.h
   selectsignaldialog.h
@@ -111,7 +112,8 @@ set(srcs
   setscaledialog.cpp
   signaldata.cpp
   signaldescription.cpp
-  lcmthread.cpp
+  #lcmthread.cpp
+  #lcmsubscriber.cpp
   signalhandler.cpp
   selectsignaldialog.cpp
   ${python_srcs}
@@ -131,7 +133,7 @@ list(APPEND deps
   ${QT_LIBRARIES}
   ${QWT_LIBRARY}
   ${python_deps}
-  ${LCM_LIBRARIES}
+  #${LCM_LIBRARIES}
   )
 
 target_link_libraries(signal-scope ${deps})

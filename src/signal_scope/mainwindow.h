@@ -53,7 +53,7 @@ public slots:
 
   PlotWidget* addPlot();
   void loadPythonScript(const QString& filename);
-  PythonSignalHandler* addPythonSignal(PlotWidget* plot, QVariant signalData);
+  SignalHandler* addPythonSignal(PlotWidget* plot, QVariant signalData);
 
   QList<PlotWidget*> getPlots() { return mPlots; }
 
@@ -73,8 +73,8 @@ protected:
   void loadSettings(const QMap<QString, QVariant>& settings);
   void loadPlot(const QMap<QString, QVariant>& plot);
 
-  void testPythonSignals();
   void initPython();
+  void initPythonLCM();
 
   bool eventFilter(QObject* watched, QEvent* e);
 

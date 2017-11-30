@@ -17,11 +17,11 @@ def main():
     try:
         jsonFile = sys.argv[1]
     except IndexError:
-        print 'Usage: %s <filename>' % sys.argv[0]
+        print('Usage: %s <filename>' % sys.argv[0])
         sys.exit(1)
 
     jsonStr = json.load(open(jsonFile, 'r'))
-    print json.dumps(jsonStr, indent=2)
+    print(json.dumps(jsonStr, indent=2))
 
 
 if __name__ == '__main__':

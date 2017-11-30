@@ -11,7 +11,7 @@ class SignalData;
 class SignalDescription;
 
 
-class PythonSignalHandler : public SignalHandler
+class PythonSignalHandler : public LCMSubscriber
 {
   Q_OBJECT
 
@@ -20,11 +20,6 @@ public:
   PythonSignalHandler(SignalDescription* signalDescription, PythonQtObjectPtr callback) : SignalHandler(signalDescription)
   {
     mCallback = callback;
-  }
-
-  virtual QString description()
-  {
-    return mDescription.mFieldName;
   }
 
   void onNewMessage(const QVariant& message)

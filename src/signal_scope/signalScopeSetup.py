@@ -4,18 +4,18 @@ import glob
 import time
 import traceback
 from PythonQt import QtGui
-
+from PythonQt import signal_scope
 
 _messageTypes = {}
 
 def loadMessageTypes(typesDict, typesName):
 
     originalSize = len(_messageTypes)
-    for name, value in typesDict.iteritems():
+    for name, value in typesDict.items():
         if hasattr(value, '_get_packed_fingerprint'):
             _messageTypes[value._get_packed_fingerprint()] = value
 
-    print 'Loaded %d lcm message types from: %s' % (len(_messageTypes) - originalSize, typesName)
+    print('Loaded %d lcm message types from: %s' % (len(_messageTypes) - originalSize, typesName))
 
 
 def findLCMModules(searchDir):
@@ -29,7 +29,7 @@ def findLCMModules(searchDir):
             try:
                 module = __import__(moduleName)
             except ImportError:
-                print traceback.format_exc()
+                print(traceback.format_exc())
 
             sys.path.pop(0)
             loadMessageTypes(module.__dict__, module.__name__)
@@ -41,7 +41,7 @@ def findLCMTypes(searchDir):
         if open(filename, 'r').readline() == '"""LCM type definitions\n':
             scope = {}
             try:
-                execfile(filename, scope)
+                exec(compile(open(filename).read(), filename, 'exec'), scope)
             except:
                 pass
             loadMessageTypes(scope, os.path.basename(filename))
@@ -52,17 +52,17 @@ def findLCMModulesInSysPath():
         for searchDir in sys.path:
             findLCMModules(searchDir)
     except:
-        print traceback.format_exc()
+        print(traceback.format_exc())
 
 findLCMModulesInSysPath()
 
 
 def getMessageTypeNames():
-    return sorted([cls.__name__ for cls in _messageTypes.values()])
+    return sorted([cls.__name__ for cls in list(_messageTypes.values())])
 
 
 def getMessageType(typeName):
-    for cls in _messageTypes.values():
+    for cls in list(_messageTypes.values()):
         if cls.__name__ == typeName:
             return cls
 
@@ -146,6 +146,8 @@ def decodeMessageFunction(messageBytes):
 
 msg = LookupHelper()
 tNow = LocalTimeHelper()
+_mainWindow = signal_scope.mainWindow
+
 
 def setFormatOptions(pointSize=None, timeWindow=None, curveStyle=None):
     window = _mainWindow;

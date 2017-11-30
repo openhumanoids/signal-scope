@@ -1,24 +1,17 @@
 #ifndef _SIGNALHANDLER_H_
 #define _SIGNALHANDLER_H_
 
-#include "lcmsubscriber.h"
 #include "signaldescription.h"
 
 #include <QHash>
 #include <string>
 
 
-namespace lcm {
-  class LCM;
-  class ReceiveBuffer;
-  class Subscription;
-}
-
 class SignalData;
 class SignalDescription;
 
 
-class SignalHandler : public LCMSubscriber
+class SignalHandler : public QObject
 {
   Q_OBJECT
 
@@ -32,17 +25,19 @@ public:
     return mSignalData;
   }
 
-  virtual QString description() = 0;
+public slots:
+
+  virtual QString description()
+  {
+    return mDescription.mFieldName;
+  }
+
   QString channel() { return mDescription.mChannel; }
   SignalDescription* signalDescription() { return &mDescription; }
 
-  virtual bool extractSignalData(const lcm::ReceiveBuffer* rbuf, double& timeNow, double& signalValue) = 0;
-
-  virtual void subscribe(lcm::LCM* lcmInstance);
+  void appendSample(double timeNow, double signalValue);
 
  protected:
-
-  void handleMessage(const lcm::ReceiveBuffer* rbuf, const std::string& channel);
 
   SignalData* mSignalData;
   SignalDescription mDescription;

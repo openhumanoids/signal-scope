@@ -5,7 +5,7 @@
 #include "signaldata.h"
 #include "selectsignaldialog.h"
 #include "signaldescription.h"
-#include "lcmthread.h"
+//#include "lcmthread.h"
 
 #if USE_BUILTIN_LCMTYPES
   #include "builtinmessages.h"
@@ -29,9 +29,10 @@
 
 #include "ctkPythonConsole.h"
 #include "ctkAbstractPythonManager.h"
-#include "pythonsignalhandler.h"
-#include "pythonmessageinspector.h"
-#include "pythonchannelsubscribercollection.h"
+#include <PythonQt.h>
+//#include "pythonsignalhandler.h"
+//#include "pythonmessageinspector.h"
+//#include "pythonchannelsubscribercollection.h"
 
 
 #include <cstdio>
@@ -53,7 +54,7 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
   mPlaying = false;
   this->setWindowTitle("Signal Scope");
 
-  mLCMThread = new LCMThread;
+  //mLCMThread = new LCMThread;
 
   this->initPython();
 
@@ -135,7 +136,7 @@ MainWindow::MainWindow(QWidget* parent): QMainWindow(parent)
 
   this->onTogglePause();
 
-  mLCMThread->start();
+  //mLCMThread->start();
 }
 
 MainWindow::~MainWindow()
@@ -144,9 +145,9 @@ MainWindow::~MainWindow()
   QString settingsFile = QDir::homePath() + "/.signal_scope.json";
   this->saveSettings(settingsFile);
 
-  mLCMThread->stop();
-  mLCMThread->wait(250);
-  delete mLCMThread;
+  //mLCMThread->stop();
+  //mLCMThread->wait(250);
+  //delete mLCMThread;
 
   delete mInternal;
 }
@@ -181,6 +182,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* e)
 {
   if(watched == this->mConsole && (e->type() == QEvent::Hide || e->type() == QEvent::Show))
   {
+    /*
       if (e->type() == QEvent::Show)
       {
         mLCMThread->pause();
@@ -189,6 +191,7 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* e)
       {
         mLCMThread->resume();
       }
+    */
   }
 
   return QObject::eventFilter(watched, e);
@@ -215,10 +218,16 @@ void MainWindow::initPython()
 
 
   PythonQt::self()->registerClass(&PlotWidget::staticMetaObject, "signal_scope");
-  PythonQt::self()->registerClass(&PythonSignalHandler::staticMetaObject, "signal_scope");
+  PythonQt::self()->registerClass(&SignalHandler::staticMetaObject, "signal_scope");
 
-  this->mPythonManager->addObjectToPythonMain("_console", this->mConsole);
-  this->mPythonManager->addObjectToPythonMain("_mainWindow", this);
+
+  PythonQt::self()->importModule("PythonQt.signal_scope").addObject("console", this->mConsole);
+  PythonQt::self()->importModule("PythonQt.signal_scope").addObject("mainWindow", this);
+}
+
+void MainWindow::initPythonLCM()
+{
+  //PythonQt::self()->registerClass(&PythonSignalHandler::staticMetaObject, "signal_scope");
 
   QString startupFile = QString(":/signalScopeSetup.py");
 
@@ -236,13 +245,14 @@ void MainWindow::initPython()
   PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
   PythonQtObjectPtr decodeCallback = PythonQt::self()->getVariable(mainContext, "decodeMessageFunction");
 
-  this->mSubscribers = new PythonChannelSubscriberCollection(mLCMThread, decodeCallback, this);
-  this->mMessageInspector = new PythonMessageInspector(decodeCallback);
+  //this->mSubscribers = new PythonChannelSubscriberCollection(mLCMThread, decodeCallback, this);
+  //this->mMessageInspector = new PythonMessageInspector(decodeCallback);
   //this->mLCMThread->addSubscriber(this->mMessageInspector);
 }
 
-PythonSignalHandler* MainWindow::addPythonSignal(PlotWidget* plot, QVariant signalData)
+SignalHandler* MainWindow::addPythonSignal(PlotWidget* plot, QVariant signalData)
 {
+
   QList<QVariant> signalDataList = signalData.toList();
   if (signalDataList.length() != 4)
   {
@@ -259,9 +269,13 @@ PythonSignalHandler* MainWindow::addPythonSignal(PlotWidget* plot, QVariant sign
   signalDescription.mFieldName = fieldName;
   signalDescription.mColor = signalDataList[3].value<QColor>();
 
-  PythonSignalHandler* signalHandler = new PythonSignalHandler(&signalDescription, callback);
+  //PythonSignalHandler* signalHandler = new PythonSignalHandler(&signalDescription, callback);
+  SignalHandler* signalHandler = new SignalHandler(&signalDescription);
+
   plot->addSignal(signalHandler);
   return signalHandler;
+
+  return 0;
 }
 
 void MainWindow::onTimeWindowChanged(double timeWindow)
@@ -276,11 +290,16 @@ void MainWindow::loadPythonScript(const QString& filename)
 {
   if (QFileInfo(filename).exists())
   {
-    this->mLCMThread->pause();
+    //this->mLCMThread->pause();
     this->mLastPythonScript = filename;
     this->onRemoveAllPlots();
-    this->mPythonManager->executeFile(filename);
-    this->mLCMThread->resume();
+
+    QString code = "__file__ = '"+filename+"'\n"
+                   "code = compile(open(__file__, 'r').read(), __file__, 'exec')\n"
+                   "exec(code, globals())";
+
+    this->mPythonManager->executeString(code);
+    //this->mLCMThread->resume();
   }
   else
   {
