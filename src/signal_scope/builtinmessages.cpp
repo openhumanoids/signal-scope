@@ -17,8 +17,8 @@
 #include <lcmtypes/vicon.hpp>
 #include "lcmtypes/pronto/filter_state_t.hpp"
 
-#include "lcmtypes/drc/foot_contact_estimate_t.hpp"
-#include "lcmtypes/drc/controller_debug_t.hpp"
+#include "lcmtypes/pronto/foot_contact_estimate_t.hpp"
+// #include "lcmtypes/drc/controller_debug_t.hpp"
 
 namespace
 {
@@ -323,13 +323,13 @@ define_array_handler(ViconBodyTransHandler, vicon::body_t, trans, createIndexLis
 define_array_handler(ViconBodyQuatHandler, vicon::body_t, quat, createIndexList(4));
 
 // controller_debug_t
-define_field_handler(ControllerDebugRightFoot, drc::controller_debug_t, r_foot_contact);
-define_field_handler(ControllerDebugLeftFoot, drc::controller_debug_t, l_foot_contact);
-define_field_handler(ControllerDebugSolverInfo, drc::controller_debug_t, info);
-define_array_handler(ControllerDebugQddDes, drc::controller_debug_t, qddot_des, createIndexList(34));
-define_array_handler(ControllerDebugU, drc::controller_debug_t, u, createIndexList(28));
-define_array_handler(ControllerDebugAlpha, drc::controller_debug_t, alpha, createIndexList(90));
-define_array_handler(ControllerDebugZMPerr, drc::controller_debug_t, zmp_err, createIndexList(2));
+// define_field_handler(ControllerDebugRightFoot, drc::controller_debug_t, r_foot_contact);
+// define_field_handler(ControllerDebugLeftFoot, drc::controller_debug_t, l_foot_contact);
+// define_field_handler(ControllerDebugSolverInfo, drc::controller_debug_t, info);
+// define_array_handler(ControllerDebugQddDes, drc::controller_debug_t, qddot_des, createIndexList(34));
+// define_array_handler(ControllerDebugU, drc::controller_debug_t, u, createIndexList(28));
+// define_array_handler(ControllerDebugAlpha, drc::controller_debug_t, alpha, createIndexList(90));
+// define_array_handler(ControllerDebugZMPerr, drc::controller_debug_t, zmp_err, createIndexList(2));
 
 define_array_handler(AtlasControlJointsPositionHandler, bot_core::atlas_command_t, position, JointNames::jointNames());
 define_array_handler(AtlasControlJointsVelocityHandler, bot_core::atlas_command_t, velocity, JointNames::jointNames());
@@ -347,8 +347,8 @@ define_array_handler(AtlasControlJointsKEffortHandler, bot_core::atlas_command_t
 define_field_handler(AtlasControlJointsDesiredControllerPeriodHandler, bot_core::atlas_command_t, desired_controller_period_ms);
 
 // foot_contact_estimate_t
-define_field_handler(FootContactLeft, drc::foot_contact_estimate_t, left_contact);
-define_field_handler(FootContactRight, drc::foot_contact_estimate_t, right_contact);
+define_field_handler(FootContactLeft, pronto::foot_contact_estimate_t, left_contact);
+define_field_handler(FootContactRight, pronto::foot_contact_estimate_t, right_contact);
 
 // pronto_filter_state_t
 define_array_handler(FilterStateHandler, pronto::filter_state_t, state, createIndexList(21));
@@ -447,13 +447,13 @@ void BuiltinMessages::registerBuiltinHandlers(SignalHandlerFactory& factory)
     factory.registerClass<PoseTypeAcceleration>();
     factory.registerClass<ViconBodyTransHandler>();
     factory.registerClass<ViconBodyQuatHandler>();
-    factory.registerClass<ControllerDebugRightFoot>();
-    factory.registerClass<ControllerDebugLeftFoot>();
-    factory.registerClass<ControllerDebugSolverInfo>();
-    factory.registerClass<ControllerDebugQddDes>();
-    factory.registerClass<ControllerDebugU>();
-    factory.registerClass<ControllerDebugAlpha>();
-    factory.registerClass<ControllerDebugZMPerr>();
+    // factory.registerClass<ControllerDebugRightFoot>();
+    // factory.registerClass<ControllerDebugLeftFoot>();
+    // factory.registerClass<ControllerDebugSolverInfo>();
+    // factory.registerClass<ControllerDebugQddDes>();
+    // factory.registerClass<ControllerDebugU>();
+    // factory.registerClass<ControllerDebugAlpha>();
+    // factory.registerClass<ControllerDebugZMPerr>();
     factory.registerClass<AtlasControlJointsPositionHandler>();
     factory.registerClass<AtlasControlJointsVelocityHandler>();
     factory.registerClass<AtlasControlJointsEffortHandler>();
