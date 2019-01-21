@@ -1,6 +1,6 @@
 if("${USED_QTVERSION}" STREQUAL "5")
-  find_package(Qt5 REQUIRED Core Gui Script Widgets)
-  set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Script Qt5::Widgets)
+  find_package(Qt5 REQUIRED Core Gui Script Widgets OpenGL Svg)
+  set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Script Qt5::Widgets Qt5::OpenGL Qt5::Svg)
   # Compatibility macros
   macro(qt4_wrap_cpp)
     qt5_wrap_cpp(${ARGN})
@@ -130,8 +130,8 @@ if (USE_BUILTIN_LCMTYPES)
 endif()
 
 list(APPEND deps
-  ${QT_LIBRARIES}
   ${QWT_LIBRARY}
+  ${QT_LIBRARIES}
   ${python_deps}
   #${LCM_LIBRARIES}
   )
